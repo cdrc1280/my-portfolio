@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Projects\DataTransferObjects;
 
 use App\Domain\Projects\Enums\ProjectStatus;
+use App\Domain\Shared\Support\Input;
 use Illuminate\Http\UploadedFile;
 
 /**
@@ -43,12 +44,6 @@ final readonly class ProjectData
      */
     public static function fromValidated(array $validated): self
     {
-        /** @var list<string> $highlights */
-        $highlights = array_values(array_filter(
-            array_map(fn (mixed $line): string => trim((string) $line), (array) ($validated['highlights'] ?? [])),
-            fn (string $line): bool => $line !== '',
-        ));
-
         /** @var list<UploadedFile> $newImages */
         $newImages = array_values((array) ($validated['images'] ?? []));
 
@@ -56,19 +51,19 @@ final readonly class ProjectData
             title: (string) $validated['title'],
             slug: (string) $validated['slug'],
             summary: (string) $validated['summary'],
-            body: self::nullableString($validated['body'] ?? null),
-            role: self::nullableString($validated['role'] ?? null),
-            period: self::nullableString($validated['period'] ?? null),
-            highlights: $highlights,
-            liveUrl: self::nullableString($validated['live_url'] ?? null),
-            repoUrl: self::nullableString($validated['repo_url'] ?? null),
+            body: Input::nullableString($validated['body'] ?? null),
+            role: Input::nullableString($validated['role'] ?? null),
+            period: Input::nullableString($validated['period'] ?? null),
+            highlights: Input::stringList($validated['highlights'] ?? []),
+            liveUrl: Input::nullableString($validated['live_url'] ?? null),
+            repoUrl: Input::nullableString($validated['repo_url'] ?? null),
             status: ProjectStatus::from((string) $validated['status']),
             isFeatured: (bool) ($validated['is_featured'] ?? false),
-            tagIds: array_map(intval(...), array_values((array) ($validated['tag_ids'] ?? []))),
+            tagIds: Input::intList($validated['tag_ids'] ?? []),
             cover: ($validated['cover'] ?? null) instanceof UploadedFile ? $validated['cover'] : null,
             removeCover: (bool) ($validated['remove_cover'] ?? false),
             newImages: $newImages,
-            removedImageIds: array_map(intval(...), array_values((array) ($validated['removed_image_ids'] ?? []))),
+            removedImageIds: Input::intList($validated['removed_image_ids'] ?? []),
         );
     }
 
@@ -92,12 +87,5 @@ final readonly class ProjectData
             'status' => $this->status,
             'is_featured' => $this->isFeatured,
         ];
-    }
-
-    private static function nullableString(mixed $value): ?string
-    {
-        $value = is_string($value) ? trim($value) : null;
-
-        return $value === '' ? null : $value;
     }
 }
