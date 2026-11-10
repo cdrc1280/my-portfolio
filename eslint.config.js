@@ -55,6 +55,8 @@ export default tseslint.config(
             ...react.configs.flat['jsx-runtime'].rules,
             'react/prop-types': 'off',
             'react/no-unescaped-entities': 'off',
+            // Inertia's <Head> de-duplicates tags by `head-key`.
+            'react/no-unknown-property': ['error', { ignore: ['head-key'] }],
         },
     },
     {

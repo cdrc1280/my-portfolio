@@ -11,4 +11,6 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    /** Also mark active on nested routes (e.g. /admin/projects/1/edit). */
+    matchPrefix?: boolean;
 };
