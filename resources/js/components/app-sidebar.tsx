@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ExternalLink, LayoutGrid } from 'lucide-react';
+import { ExternalLink, FolderKanban, LayoutGrid, Tags } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,10 +15,14 @@ import {
 } from '@/components/ui/sidebar';
 import { home } from '@/routes';
 import { dashboard } from '@/routes/admin';
+import { index as projectsIndex } from '@/routes/admin/projects';
+import { index as tagsIndex } from '@/routes/admin/tags';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+    { title: 'Projects', href: projectsIndex(), icon: FolderKanban, matchPrefix: true },
+    { title: 'Tags', href: tagsIndex(), icon: Tags, matchPrefix: true },
 ];
 
 const footerNavItems: NavItem[] = [{ title: 'View site', href: home(), icon: ExternalLink }];
