@@ -42,7 +42,6 @@ export default defineConfig({
                 '**/.cursor/**',
                 '**/.junie/**',
                 '**/vendor/**',
-                '**/legacy/**',
                 '**/graphify-out/**',
             ],
         },

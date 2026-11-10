@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\GitHub\DataTransferObjects\GitHubActivityData;
+use App\Domain\Profile\DataTransferObjects\SiteProfileData;
 use Illuminate\Support\Str;
 
 return [
@@ -133,8 +135,8 @@ return [
     */
 
     'serializable_classes' => [
-        App\Domain\Profile\DataTransferObjects\SiteProfileData::class,
-        App\Domain\GitHub\DataTransferObjects\GitHubActivityData::class,
+        SiteProfileData::class,
+        GitHubActivityData::class,
     ],
 
 ];

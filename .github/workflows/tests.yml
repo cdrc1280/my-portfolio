@@ -1,4 +1,4 @@
-name: tests
+name: CI
 
 on:
   push:
@@ -10,7 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  ci:
+  quality:
+    name: Lint, types and tests
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +23,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
+          extensions: intl, pdo_sqlite, gd, zip, bcmath
           tools: composer:v2
           coverage: none
 
@@ -30,9 +32,51 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
+          cache: npm
 
-      - name: Setup Application
-        run: composer setup
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          npm ci
 
-      - name: Run CI Checks
-        run: composer ci:check
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan wayfinder:generate --with-form
+
+      - name: PHP style (Pint)
+        run: composer lint:check
+
+      - name: PHP static analysis (Larastan)
+        run: composer types:check
+
+      - name: ESLint
+        run: npm run lint:check
+
+      - name: Prettier
+        run: npm run format:check
+
+      - name: TypeScript
+        run: npm run types:check
+
+      - name: Pest
+        run: php artisan test --parallel
+
+      - name: Production asset build
+        run: npm run build
+
+  docker:
+    name: Production image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build prod and web targets
+        run: |
+          docker build -f docker/php/Dockerfile --target prod -t portfolio-app .
+          docker build -f docker/php/Dockerfile --target web -t portfolio-web .

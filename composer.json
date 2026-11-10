@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "sedistasis/portfolio",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Personal developer portfolio: Laravel 13, Inertia, React + TypeScript, domain-driven.",
     "keywords": [
+        "portfolio",
         "laravel",
-        "framework"
+        "inertia",
+        "react"
     ],
     "license": "MIT",
     "require": {
@@ -40,18 +42,6 @@
         }
     },
     "scripts": {
-        "setup": [
-            "composer install",
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
-            "npm install",
-            "npm run build"
-        ],
-        "dev": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan dev"
-        ],
         "lint": [
             "pint --parallel"
         ],
