@@ -3,23 +3,24 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
-     * Seed the application's database.
+     * Seed the admin account and the sample portfolio content.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::query()->updateOrCreate(
+            ['email' => config('portfolio.admin.email')],
+            [
+                'name' => config('portfolio.admin.name'),
+                'password' => config('portfolio.admin.password'),
+                'email_verified_at' => now(),
+            ],
+        )->forceFill(['is_admin' => true])->save();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $this->call(PortfolioSeeder::class);
     }
 }

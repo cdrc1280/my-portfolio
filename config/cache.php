@@ -36,7 +36,8 @@ return [
 
         'array' => [
             'driver' => 'array',
-            'serialize' => false,
+            // Tests enable this so cached values round-trip like Redis.
+            'serialize' => (bool) env('CACHE_ARRAY_SERIALIZE', false),
         ],
 
         'database' => [
@@ -131,6 +132,9 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        App\Domain\Profile\DataTransferObjects\SiteProfileData::class,
+        App\Domain\GitHub\DataTransferObjects\GitHubActivityData::class,
+    ],
 
 ];
