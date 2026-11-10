@@ -1,42 +1,16 @@
 import { Link, router } from '@inertiajs/react';
 import { Pencil, Star, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { SortableList } from '@/components/shared/sortable-list';
 import { Button } from '@/components/ui/button';
 import { ProjectStatusBadge } from '@/features/projects/components/project-status-badge';
 import type { AdminProject } from '@/features/projects/types';
+import { useReorder } from '@/hooks/use-reorder';
 import { destroy, edit, reorder } from '@/routes/admin/projects';
 
-/**
- * Sortable list of projects. Order changes are applied optimistically and
- * persisted immediately; the server's order wins once the request returns.
- */
+/** Sortable list of projects; the order is persisted on drop. */
 export function AdminProjectList({ projects }: { projects: AdminProject[] }) {
-    const [pendingOrder, setPendingOrder] = useState<number[] | null>(null);
-    const [saving, setSaving] = useState(false);
-
-    const items = pendingOrder
-        ? pendingOrder.map((id) => projects.find((project) => project.id === id)).filter((p) => p !== undefined)
-        : projects;
-
-    const persistOrder = (ordered: AdminProject[]) => {
-        const ids = ordered.map((project) => project.id);
-        setPendingOrder(ids);
-        setSaving(true);
-
-        router.post(
-            reorder.url(),
-            { ids },
-            {
-                preserveScroll: true,
-                onFinish: () => {
-                    setSaving(false);
-                    setPendingOrder(null);
-                },
-            },
-        );
-    };
+    const { items, reorder: persistOrder, saving } = useReorder(projects, reorder.url());
 
     return (
         <SortableList
