@@ -31,3 +31,24 @@ export type SiteProfile = {
     resume_url: string | null;
     socials: Array<{ platform: SocialPlatform; label: string; url: string }>;
 };
+
+/** A paginated Laravel ResourceCollection (LengthAwarePaginator). */
+export type Paginated<TItem> = {
+    data: TItem[];
+    links: {
+        first: string | null;
+        last: string | null;
+        prev: string | null;
+        next: string | null;
+    };
+    meta: {
+        current_page: number;
+        from: number | null;
+        last_page: number;
+        links: Array<{ url: string | null; label: string; active: boolean }>;
+        path: string;
+        per_page: number;
+        to: number | null;
+        total: number;
+    };
+};

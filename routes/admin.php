@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
+use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\SkillCategoryController;
@@ -47,4 +48,7 @@ Route::middleware(['auth', 'can:access-admin'])
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('social-links/reorder', [SocialLinkController::class, 'reorder'])->name('social-links.reorder');
         Route::resource('social-links', SocialLinkController::class)->only(['store', 'update', 'destroy']);
+
+        Route::patch('messages/{message}/unread', [MessageController::class, 'unread'])->name('messages.unread');
+        Route::resource('messages', MessageController::class)->only(['index', 'show', 'destroy']);
     });
