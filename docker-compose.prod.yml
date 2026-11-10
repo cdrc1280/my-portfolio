@@ -26,6 +26,12 @@ services:
     entrypoint: []
     command: php artisan queue:work redis --tries=3 --backoff=10 --max-time=3600
 
+  scheduler:
+    <<: *app
+    restart: unless-stopped
+    entrypoint: []
+    command: php artisan schedule:work
+
   web:
     build:
       context: .

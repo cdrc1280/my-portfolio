@@ -11,7 +11,8 @@ type SeoProps = {
 /** Per-page <title>, meta description, canonical and Open Graph tags. */
 export function Seo({ title, description, image, type = 'website' }: SeoProps) {
     const page = usePage();
-    const { appUrl, name } = page.props;
+    const { appUrl, site } = page.props;
+    const name = site.name;
     const canonical = `${appUrl}${page.url.split('?')[0]}`;
     const fullTitle = title ? `${title} · ${name}` : name;
     const imageUrl = image ? (image.startsWith('http') ? image : `${appUrl}${image}`) : null;

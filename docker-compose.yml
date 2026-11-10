@@ -41,6 +41,12 @@ services:
     user: www-data
     command: php artisan queue:work redis --tries=3 --backoff=10 --sleep=1
 
+  scheduler:
+    <<: *app
+    restart: unless-stopped
+    user: www-data
+    command: php artisan schedule:work
+
   node:
     <<: *app
     user: www-data

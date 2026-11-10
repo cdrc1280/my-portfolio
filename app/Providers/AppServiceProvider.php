@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domain\GitHub\Support\GitHubClient;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(GitHubClient::class, fn (): GitHubClient => GitHubClient::fromConfig());
     }
 
     /**

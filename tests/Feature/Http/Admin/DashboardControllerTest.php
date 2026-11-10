@@ -17,5 +17,9 @@ test('admins can visit the dashboard', function () {
     $this->actingAs(User::factory()->admin()->create())
         ->get(route('admin.dashboard'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->component('admin/dashboard'));
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('admin/dashboard')
+            ->where('stats.unread_messages', 0)
+            ->has('stats.published_projects')
+            ->has('recentMessages', 0));
 });
