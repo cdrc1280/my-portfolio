@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, ExternalLink, FolderKanban, LayoutGrid, Sparkles, Tags } from 'lucide-react';
+import { BriefcaseBusiness, ExternalLink, FolderKanban, IdCard, LayoutGrid, Sparkles, Tags } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -16,6 +16,7 @@ import {
 import { home } from '@/routes';
 import { dashboard } from '@/routes/admin';
 import { index as experienceIndex } from '@/routes/admin/experience';
+import { edit as profileEdit } from '@/routes/admin/profile';
 import { index as projectsIndex } from '@/routes/admin/projects';
 import { index as skillsIndex } from '@/routes/admin/skills';
 import { index as tagsIndex } from '@/routes/admin/tags';
@@ -27,6 +28,7 @@ const mainNavItems: NavItem[] = [
     { title: 'Tags', href: tagsIndex(), icon: Tags, matchPrefix: true },
     { title: 'Skills', href: skillsIndex(), icon: Sparkles, matchPrefix: true },
     { title: 'Experience', href: experienceIndex(), icon: BriefcaseBusiness, matchPrefix: true },
+    { title: 'Site profile', href: profileEdit(), icon: IdCard },
 ];
 
 const footerNavItems: NavItem[] = [{ title: 'View site', href: home(), icon: ExternalLink }];

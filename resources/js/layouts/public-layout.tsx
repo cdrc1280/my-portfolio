@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { SocialLinks } from '@/components/shared/social-links';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -11,7 +12,7 @@ import { home } from '@/routes';
 
 /** Portfolio-facing shell: slim header, centred content column, footer. */
 export default function PublicLayout({ children }: { children: ReactNode }) {
-    const { name } = usePage().props;
+    const { site } = usePage().props;
 
     return (
         <div className="flex min-h-svh flex-col">
@@ -25,7 +26,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
                 <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-6 px-4 sm:px-6">
                     <Link href={home()} className="font-semibold tracking-tight">
-                        {name}
+                        {site.name}
                     </Link>
 
                     <div className="flex items-center gap-1">
@@ -43,10 +44,11 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             </main>
 
             <footer className="border-t">
-                <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
+                <div className="mx-auto flex max-w-5xl flex-col-reverse gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
                     <p>
-                        © {new Date().getFullYear()} {name}
+                        © {new Date().getFullYear()} {site.name}
                     </p>
+                    <SocialLinks className="-ml-2 sm:ml-0" />
                 </div>
             </footer>
         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Profile\Actions\GetProfileAction;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -40,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'appUrl' => rtrim((string) config('app.url'), '/'),
+            'site' => fn () => app(GetProfileAction::class)->snapshot()->toArray(),
             'auth' => [
                 'user' => fn () => $request->user() ? UserResource::make($request->user())->resolve($request) : null,
             ],

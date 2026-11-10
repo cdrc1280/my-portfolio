@@ -4,9 +4,11 @@ use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController;
+use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +42,9 @@ Route::middleware(['auth', 'can:access-admin'])
         Route::resource('education', EducationController::class)->only(['store', 'update', 'destroy']);
         Route::post('certificates/reorder', [CertificateController::class, 'reorder'])->name('certificates.reorder');
         Route::resource('certificates', CertificateController::class)->only(['store', 'update', 'destroy']);
+
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('social-links/reorder', [SocialLinkController::class, 'reorder'])->name('social-links.reorder');
+        Route::resource('social-links', SocialLinkController::class)->only(['store', 'update', 'destroy']);
     });
