@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\SkillCategoryController;
@@ -29,6 +30,8 @@ Route::middleware(['auth', 'can:access-admin'])
 
         Route::post('projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
         Route::resource('projects', ProjectController::class)->except('show');
+
+        Route::resource('posts', PostController::class)->except('show');
 
         Route::resource('tags', TagController::class)->only(['index', 'store', 'update', 'destroy']);
 

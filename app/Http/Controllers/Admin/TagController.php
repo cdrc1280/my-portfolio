@@ -24,7 +24,7 @@ class TagController extends Controller
 
         return Inertia::render('admin/tags/index', [
             'tags' => TagResource::collection(
-                Tag::query()->withCount('projects')->orderBy('name')->get(),
+                Tag::query()->withCount(['projects', 'posts'])->orderBy('name')->get(),
             ),
         ]);
     }

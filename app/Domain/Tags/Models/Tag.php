@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Tags\Models;
 
+use App\Domain\Blog\Models\Post;
 use App\Domain\Projects\Models\Project;
 use App\Domain\Tags\Policies\TagPolicy;
 use Carbon\CarbonImmutable;
@@ -36,5 +37,13 @@ class Tag extends Model
     public function projects(): MorphToMany
     {
         return $this->morphedByMany(Project::class, 'taggable');
+    }
+
+    /**
+     * @return MorphToMany<Post, $this>
+     */
+    public function posts(): MorphToMany
+    {
+        return $this->morphedByMany(Post::class, 'taggable');
     }
 }

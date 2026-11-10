@@ -27,6 +27,7 @@ export function TagTable({ tags }: { tags: AdminTag[] }) {
                         <TableHead>Name</TableHead>
                         <TableHead className="hidden sm:table-cell">Slug</TableHead>
                         <TableHead className="text-right">Projects</TableHead>
+                        <TableHead className="text-right">Posts</TableHead>
                         <TableHead className="w-24">
                             <span className="sr-only">Actions</span>
                         </TableHead>
@@ -38,14 +39,15 @@ export function TagTable({ tags }: { tags: AdminTag[] }) {
                             <TableCell className="font-medium">{tag.name}</TableCell>
                             <TableCell className="hidden text-muted-foreground sm:table-cell">{tag.slug}</TableCell>
                             <TableCell className="text-right tabular-nums">{tag.projects_count}</TableCell>
+                            <TableCell className="text-right tabular-nums">{tag.posts_count}</TableCell>
                             <TableCell>
                                 <div className="flex justify-end gap-1">
                                     <EditTagDialog tag={tag} />
                                     <ConfirmDialog
                                         title={`Delete "${tag.name}"?`}
                                         description={
-                                            tag.projects_count > 0
-                                                ? `It will be removed from ${tag.projects_count} project(s).`
+                                            tag.projects_count + tag.posts_count > 0
+                                                ? `It will be removed from ${tag.projects_count} project(s) and ${tag.posts_count} post(s).`
                                                 : 'This tag is not used anywhere.'
                                         }
                                         confirmLabel="Delete"

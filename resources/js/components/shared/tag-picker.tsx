@@ -12,7 +12,7 @@ type TagPickerProps = {
 /** Toggle-button group for choosing a project's technologies. */
 export function TagPicker({ tags, selected, onChange, labelledBy }: TagPickerProps) {
     if (tags.length === 0) {
-        return <p className="text-sm text-muted-foreground">No tags yet — create some on the Tags page.</p>;
+        return <p className="text-sm text-muted-foreground">No tags yet. Create some on the Tags page.</p>;
     }
 
     const toggle = (id: number) =>

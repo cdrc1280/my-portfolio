@@ -4,4 +4,5 @@ export type AdminTag = {
     name: string;
     slug: string;
     projects_count: number;
+    posts_count: number;
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ContactController;
 use App\Http\Controllers\Public\ProjectController;
 use App\Http\Controllers\Public\ResumeController;
@@ -9,6 +10,9 @@ Route::inertia('/', 'welcome')->name('home');
 
 Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('projects/{slug}', [ProjectController::class, 'show'])->name('projects.show');
+
+Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('resume', ResumeController::class)->name('resume.download');
 

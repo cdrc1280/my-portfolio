@@ -2,10 +2,10 @@ import { Link } from '@inertiajs/react';
 import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
 import { Prose } from '@/components/shared/prose';
 import { Seo } from '@/components/shared/seo';
+import { TagList } from '@/components/shared/tag-list';
 import { Button } from '@/components/ui/button';
 import { ProjectGallery } from '@/features/projects/components/project-gallery';
 import { ProjectGrid } from '@/features/projects/components/project-grid';
-import { TagList } from '@/features/projects/components/tag-list';
 import type { Project, ProjectCard } from '@/features/projects/types';
 import { index } from '@/routes/projects';
 

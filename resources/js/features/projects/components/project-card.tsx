@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
-import { TagList } from '@/features/projects/components/tag-list';
+import { TagList } from '@/components/shared/tag-list';
 import type { ProjectCard as ProjectCardData } from '@/features/projects/types';
 import { show } from '@/routes/projects';
 

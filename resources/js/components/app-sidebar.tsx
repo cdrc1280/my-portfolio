@@ -1,5 +1,15 @@
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, ExternalLink, FolderKanban, IdCard, Inbox, LayoutGrid, Sparkles, Tags } from 'lucide-react';
+import {
+    BriefcaseBusiness,
+    ExternalLink,
+    FolderKanban,
+    IdCard,
+    Inbox,
+    LayoutGrid,
+    Newspaper,
+    Sparkles,
+    Tags,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -17,6 +27,7 @@ import { home } from '@/routes';
 import { dashboard } from '@/routes/admin';
 import { index as experienceIndex } from '@/routes/admin/experience';
 import { index as messagesIndex } from '@/routes/admin/messages';
+import { index as postsIndex } from '@/routes/admin/posts';
 import { edit as profileEdit } from '@/routes/admin/profile';
 import { index as projectsIndex } from '@/routes/admin/projects';
 import { index as skillsIndex } from '@/routes/admin/skills';
@@ -26,6 +37,7 @@ import type { NavItem } from '@/types';
 const mainNavItems: NavItem[] = [
     { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
     { title: 'Projects', href: projectsIndex(), icon: FolderKanban, matchPrefix: true },
+    { title: 'Blog', href: postsIndex(), icon: Newspaper, matchPrefix: true },
     { title: 'Tags', href: tagsIndex(), icon: Tags, matchPrefix: true },
     { title: 'Skills', href: skillsIndex(), icon: Sparkles, matchPrefix: true },
     { title: 'Experience', href: experienceIndex(), icon: BriefcaseBusiness, matchPrefix: true },
