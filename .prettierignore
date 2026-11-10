@@ -1,0 +1,14 @@
+vendor
+node_modules
+public
+legacy
+bootstrap/ssr
+storage
+graphify-out
+resources/js/actions
+resources/js/routes
+resources/js/wayfinder
+resources/js/components/ui
+resources/views/mail
+composer.lock
+package-lock.json

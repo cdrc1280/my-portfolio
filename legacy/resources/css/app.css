@@ -1,0 +1,306 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #05070f;
+    --bg-card: rgba(13, 18, 36, 0.65);
+    --border-card: rgba(255, 255, 255, 0.08);
+    --primary-cyan: #00f0ff;
+    --primary-purple: #8b5cf6;
+    --primary-pink: #ec4899;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+}
+
+/* Glassmorphism & Custom Styling */
+.glass-panel {
+  background: rgba(13, 18, 36, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.glass-panel-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(20, 28, 55, 0.8);
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 12px 40px 0 rgba(0, 240, 255, 0.15);
+  transform: translateY(-4px);
+}
+
+/* ==========================================
+   COMPREHENSIVE LIGHT MODE CONTRAST OVERRIDES
+   ========================================== */
+[data-theme="light"] {
+  --bg-dark: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --border-card: rgba(15, 23, 42, 0.15);
+  --primary-cyan: #0284c7;
+  --primary-purple: #7c3aed;
+  --primary-pink: #db2777;
+  --text-main: #0f172a;
+  --text-muted: #334155;
+}
+
+[data-theme="light"] body,
+[data-theme="light"] main,
+[data-theme="light"] section,
+[data-theme="light"] div[class*="bg-[#05070f]"],
+[data-theme="light"] section[class*="bg-[#05070f]"] {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] p,
+[data-theme="light"] li,
+[data-theme="light"] label,
+[data-theme="light"] small {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08) !important;
+}
+
+[data-theme="light"] .glass-panel-hover:hover {
+  background: #ffffff !important;
+  border-color: rgba(2, 132, 199, 0.4) !important;
+  box-shadow: 0 12px 36px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* Fix Cyan labels and mono comments e.g. // CAREER TIMELINE */
+[data-theme="light"] .text-\[\#00f0ff\],
+[data-theme="light"] .text-cyan-400,
+[data-theme="light"] [class*="text-[#00f0ff]"] {
+  color: #0284c7 !important;
+  font-weight: 600;
+}
+
+[data-theme="light"] .bg-\[\#00f0ff\]\/10,
+[data-theme="light"] .bg-\[\#00f0ff\]\/20,
+[data-theme="light"] [class*="bg-[#00f0ff]/"] {
+  background-color: rgba(2, 132, 199, 0.15) !important;
+}
+
+[data-theme="light"] .border-\[\#00f0ff\]\/30,
+[data-theme="light"] .border-\[\#00f0ff\]\/40,
+[data-theme="light"] [class*="border-[#00f0ff]/"] {
+  border-color: rgba(2, 132, 199, 0.3) !important;
+}
+
+[data-theme="light"] .text-slate-300,
+[data-theme="light"] .text-slate-400,
+[data-theme="light"] .text-slate-500 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #0f172a !important;
+}
+
+/* Filter buttons & active badges */
+[data-theme="light"] button.bg-\[\#00f0ff\],
+[data-theme="light"] .bg-\[\#00f0ff\] {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] input,
+[data-theme="light"] textarea {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.2) !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.glow-border {
+  position: relative;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(90deg, #00f0ff, #8b5cf6, #ec4899);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.glow-border:hover::before {
+  opacity: 1;
+}
+
+/* Text Gradients */
+.text-gradient-aurora {
+  background: linear-gradient(135deg, #00f0ff 0%, #8b5cf6 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .text-gradient-aurora {
+  background: linear-gradient(135deg, #0284c7 0%, #6d28d9 50%, #be185d 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.text-gradient-silver {
+  background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .text-gradient-silver {
+  background: linear-gradient(135deg, #0f172a 0%, #475569 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Aurora Floating Background Blobs */
+.aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.25;
+  animation: floatBlob 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] .aurora-blob {
+  opacity: 0.12;
+}
+
+.aurora-blob-1 {
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, #00f0ff, transparent);
+}
+
+.aurora-blob-2 {
+  bottom: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, #8b5cf6, transparent);
+  animation-delay: -5s;
+}
+
+.aurora-blob-3 {
+  top: 40%;
+  left: 30%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, #ec4899, transparent);
+  animation-delay: -10s;
+}
+
+@keyframes floatBlob {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(100px, 80px) scale(1.1); }
+  100% { transform: translate(-50px, 120px) scale(0.95); }
+}
+
+/* Noise overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.035;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Hologram Scanning Line */
+.hologram-scan {
+  position: relative;
+  overflow: hidden;
+}
+
+.hologram-scan::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.15), transparent);
+  animation: scanLine 6s infinite linear;
+}
+
+@keyframes scanLine {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #05070f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}
