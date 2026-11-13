@@ -8,9 +8,13 @@ visitor → Vercel (HTTPS, CDN) → container: FrankenPHP (Laravel) + Node SSR s
                                      └→ Neon Postgres: content, cache, sessions, rate limits and uploads
 ```
 
-- **No terminal needed.** Each new container runs `php artisan app:release`. It migrates under a database lock, so it
-  is safe when several instances start at once, and on the very first release it creates your admin account and the
-  real portfolio content.
+- **No terminal needed.** Each new container starts the web server first (Vercel stops an instance that isn't serving
+  within about 28 seconds), then runs `php artisan app:release` in the background over Neon's direct connection. It
+  migrates under a database lock, so it is safe when several instances start at once, and on the very first release it
+  creates your admin account and the real portfolio content. The very first visit may therefore show an error page for
+  a few seconds while the database is being set up.
+- **Region:** `vercel.json` pins the site to Singapore (`sin1`), next to the database. If you create Neon in another
+  region, change `regions` to the matching Vercel region, or every query crosses an ocean.
 - **Uploads** (résumé, images) are stored in the database and served from `/media/...`, because Vercel containers have
   no permanent disk.
 - **Emails** are sent during the request (no background worker).
@@ -20,8 +24,8 @@ visitor → Vercel (HTTPS, CDN) → container: FrankenPHP (Laravel) + Node SSR s
 |---|---|
 | `Dockerfile.vercel` | The image Vercel builds (FrankenPHP, assets, a self-contained SSR bundle) |
 | `docker/vercel/Caddyfile` | FrankenPHP web server config |
-| `docker/vercel/start.sh` | Starts SSR, runs `app:release`, then serves |
-| `vercel.json` | Tells Vercel to use the container and send every path to it |
+| `docker/vercel/start.sh` | Starts SSR, runs `app:release` in the background, then serves |
+| `vercel.json` | Tells Vercel to use the container, run it in Singapore and send every path to it |
 
 ## Step 1. Put the code on GitHub
 
@@ -121,3 +125,5 @@ to the new domain and redeploy.
 | Errors mentioning the database | Check that Neon is connected to the project (**Storage** tab), then redeploy. The runtime logs show the `app:release` output. |
 | Can't sign in to `/admin` | The admin is created only on the first release, with the env values at that moment. Check `ADMIN_EMAIL`, or reset the password from the Neon console. |
 | Runtime errors | Project → **Logs** (runtime logs). Laravel logs go there because `LOG_CHANNEL=stderr`. |
+| "could not connect to $PORT" | Something slow ran before the web server started. `start.sh` must start FrankenPHP immediately and keep slow work in the background. |
+| Every page is slow | The site and database are in different regions. Match `regions` in `vercel.json` to the Neon region. |
