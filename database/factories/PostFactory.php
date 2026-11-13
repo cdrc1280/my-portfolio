@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Domain\Blog\Enums\PostStatus;
-use App\Domain\Blog\Models\Post;
+use App\Domains\Blog\Enums\PostStatus;
+use App\Domains\Blog\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

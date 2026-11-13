@@ -1,12 +1,16 @@
 import { Link } from '@inertiajs/react';
 import { X } from 'lucide-react';
-import { PageHeader } from '@/components/shared/page-header';
-import { Pagination } from '@/components/shared/pagination';
-import { Seo } from '@/components/shared/seo';
-import { PostList } from '@/features/blog/components/post-list';
-import type { PostCard } from '@/features/blog/types';
+import { Hint } from '@/components/custom/hint';
+import { PageIntro } from '@/components/custom/page-intro';
+import { Pagination } from '@/components/custom/pagination';
+import { containers, measure, panelPadding, surface } from '@/components/custom/section';
+import { Seo } from '@/components/custom/seo';
+import { cn } from '@/lib/utils';
 import { index } from '@/routes/blog';
+import { page as shareCard } from '@/routes/og';
 import type { Paginated } from '@/types';
+import type { PostCard } from '@/types/domains/blog';
+import { PostList } from './post-list';
 
 type Props = {
     posts: Paginated<PostCard>;
@@ -16,20 +20,40 @@ type Props = {
 export default function BlogIndex({ posts, activeTag }: Props) {
     return (
         <>
-            <Seo title="Blog" description="Notes on building software: Laravel, React and shipping production systems." />
-            <div className="mx-auto max-w-3xl space-y-10">
-                <PageHeader size="lg" title="Blog" description="Notes on building and shipping software." />
+            <Seo
+                title={activeTag ? `Posts tagged ${activeTag}` : 'Blog'}
+                description="Notes on building software: Laravel, React, architecture and shipping production systems."
+                card={shareCard.url('blog')}
+            />
+
+            <PageIntro
+                label="blog"
+                title="Writing"
+                description="Notes on building and maintaining production systems: what worked, what didn't, and why."
+            >
                 {activeTag && (
-                    <p className="flex items-center gap-2 text-sm">
-                        Tagged <span className="font-medium">{activeTag}</span>
-                        <Link href={index()} className="inline-flex items-center text-muted-foreground hover:text-foreground">
-                            <X className="size-4" aria-hidden />
-                            <span className="sr-only">Clear filter</span>
-                        </Link>
+                    <p className="inline-flex items-center gap-2 rounded-md border border-border py-1 pr-1 pl-3 font-mono text-xs">
+                        tag: <span className="text-primary">{activeTag}</span>
+                        <Hint label="Clear tag filter">
+                            <Link
+                                href={index()}
+                                className="inline-flex size-6 items-center justify-center rounded-md transition-colors duration-150 hover:bg-accent hover:text-foreground"
+                                aria-label="Clear tag filter"
+                            >
+                                <X className="size-3.5" aria-hidden />
+                            </Link>
+                        </Hint>
                     </p>
                 )}
-                <PostList posts={posts.data} />
-                <Pagination paginator={posts} />
+            </PageIntro>
+
+            <div className={cn(containers.page, 'pb-24')}>
+                <div className={cn(surface, panelPadding, 'space-y-10')}>
+                    <div className={measure}>
+                        <PostList posts={posts.data} />
+                    </div>
+                    <Pagination paginator={posts} />
+                </div>
             </div>
         </>
     );

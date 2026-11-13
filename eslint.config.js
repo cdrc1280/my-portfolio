@@ -4,27 +4,19 @@ import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescrip
 import importX from 'eslint-plugin-import-x';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
-import { existsSync, readdirSync } from 'node:fs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-const featuresDir = 'resources/js/features';
-const features = existsSync(featuresDir)
-    ? readdirSync(featuresDir, { withFileTypes: true })
-          .filter((entry) => entry.isDirectory())
-          .map((entry) => entry.name)
-    : [];
-
 /**
- * Feature modules are isolated: a feature may import from components/,
- * hooks/, lib/, types/ and itself — never from a sibling feature. Shared
- * code belongs in components/shared or lib/.
+ * Layout boundaries (see README → Frontend):
+ * - components/, hooks/, lib/ and types/ never import from pages/;
+ * - a page folder's private components (e.g. pages/admin/posts/post-form.tsx) are imported relatively
+ *   by that folder's pages only, so nothing imports through `@/pages`.
  */
-const featureBoundaryZones = features.map((feature) => ({
-    target: `./${featuresDir}/${feature}`,
-    from: `./${featuresDir}`,
-    except: [`./${feature}`],
-    message: 'Features must not import from other features. Move shared code to components/shared or lib/.',
+const layoutZones = ['components', 'hooks', 'lib', 'types', 'layouts'].map((dir) => ({
+    target: `./resources/js/${dir}`,
+    from: './resources/js/pages',
+    message: 'Shared code must not depend on pages. Move what both need into components/custom or lib/.',
 }));
 
 export default tseslint.config(
@@ -34,6 +26,8 @@ export default tseslint.config(
             'node_modules/**',
             'public/**',
             'bootstrap/ssr/**',
+            // Runtime files (uploads, fake test disks); never source code.
+            'storage/**',
             'graphify-out/**',
             'resources/js/actions/**',
             'resources/js/routes/**',
@@ -79,9 +73,18 @@ export default tseslint.config(
                 { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
             ],
             '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-            ...(featureBoundaryZones.length > 0
-                ? { 'import-x/no-restricted-paths': ['error', { zones: featureBoundaryZones }] }
-                : {}),
+            'import-x/no-restricted-paths': ['error', { zones: layoutZones }],
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['@/pages/*'],
+                            message: "Import a page folder's components relatively from that folder only.",
+                        },
+                    ],
+                },
+            ],
             'import-x/order': [
                 'error',
                 {

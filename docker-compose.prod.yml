@@ -1,5 +1,8 @@
-# Production-like stack: `docker compose -f docker-compose.prod.yml up -d --build`
-# Expects a real .env (APP_ENV=production, APP_KEY, DB_*, MAIL_*, ...).
+# Production stack, built and run on the server:
+#   docker compose -f docker-compose.prod.yml up -d --build
+# Expects a real .env (copy .env.production.example). See docs/operations/oracle-cloud.md.
+#
+# Traffic: internet → caddy (HTTPS, :80/:443) → web (nginx) → app (PHP-FPM) ↔ ssr (Node pre-rendering)
 x-app: &app
   build:
     context: .
@@ -7,18 +10,22 @@ x-app: &app
     target: prod
   image: portfolio-app
   env_file: .env
+  environment:
+    INERTIA_SSR_URL: http://ssr:13714
   volumes:
     - storage:/var/www/html/storage/app
   depends_on:
-    - db
-    - redis
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_started
 
 services:
   app:
     <<: *app
     restart: unless-stopped
     environment:
-      RUN_MIGRATIONS: "true"
+      INERTIA_SSR_URL: http://ssr:13714
 
   queue:
     <<: *app
@@ -32,18 +39,42 @@ services:
     entrypoint: []
     command: php artisan schedule:work
 
+  ssr:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: ssr
+    image: portfolio-ssr
+    restart: unless-stopped
+
   web:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
       target: web
+    image: portfolio-web
     restart: unless-stopped
-    ports:
-      - "${APP_PORT:-80}:80"
+    # No published port: only Caddy reaches nginx.
     volumes:
       - storage:/var/www/html/storage/app:ro
     depends_on:
       - app
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env (e.g. cedric.duckdns.org)}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
 
   db:
     image: mysql:8.4
@@ -55,11 +86,24 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
       - dbdata:/var/lib/mysql
+    # The app waits for this, so migrations never race MySQL's first-time initialisation.
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
 
 volumes:
   dbdata:
+  redisdata:
   storage:
+  caddy_data:
+  caddy_config:

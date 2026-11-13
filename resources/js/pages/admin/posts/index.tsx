@@ -1,16 +1,16 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { Newspaper, Pencil, Plus, Trash2 } from 'lucide-react';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
-import { EmptyState } from '@/components/shared/empty-state';
-import { PageHeader } from '@/components/shared/page-header';
-import { Pagination } from '@/components/shared/pagination';
+import { ConfirmDialog } from '@/components/custom/confirm-dialog';
+import { EmptyState } from '@/components/custom/empty-state';
+import { PageHeader } from '@/components/custom/page-header';
+import { Pagination } from '@/components/custom/pagination';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PostStatusBadge } from '@/features/blog/components/post-status-badge';
-import type { AdminPost } from '@/features/blog/types';
 import { formatDate } from '@/lib/format';
 import { create, destroy, edit, index } from '@/routes/admin/posts';
 import type { Paginated } from '@/types';
+import type { AdminPost } from '@/types/domains/blog';
+import { PostStatusBadge } from './post-status-badge';
 
 export default function PostsIndex({ posts }: { posts: Paginated<AdminPost> }) {
     const newButton = (

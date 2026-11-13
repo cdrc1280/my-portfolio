@@ -15,3 +15,8 @@ bootstrap/cache/*.php
 graphify-out
 tests
 .phpunit.cache
+storage/app/*
+!storage/app/.gitignore
+bootstrap/ssr
+.githooks
+docs

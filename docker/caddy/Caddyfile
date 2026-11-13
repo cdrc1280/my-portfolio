@@ -1,0 +1,19 @@
+# HTTPS in front of the app. Caddy gets and renews a free Let's Encrypt certificate for $DOMAIN
+# automatically (the domain's DNS must point at this server and ports 80/443 must be open).
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Long cache for fingerprinted build assets; everything else is decided by Laravel.
+	@assets path /build/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	reverse_proxy web:80
+}

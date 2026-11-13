@@ -1,8 +1,9 @@
 import { Form, Head } from '@inertiajs/react';
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import DeleteUser from '@/components/delete-user';
-import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
+import ProfileController from '@/actions/App/Domains/Account/Controllers/Settings/ProfileController';
+import DeleteUser from '@/components/custom/delete-user';
+import Heading from '@/components/custom/heading';
+import InputError from '@/components/custom/input-error';
+import { RequiredMark } from '@/components/custom/required-mark';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,11 +27,15 @@ export default function Profile() {
                         preserveScroll: true,
                     }}
                     className="space-y-6"
+                    noValidate
                 >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">
+                                    Name
+                                    <RequiredMark />
+                                </Label>
 
                                 <Input
                                     id="name"
@@ -46,7 +51,10 @@ export default function Profile() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">
+                                    Email address
+                                    <RequiredMark />
+                                </Label>
 
                                 <Input
                                     id="email"

@@ -10,7 +10,9 @@ export type UseAppearanceReturn = {
 };
 
 const listeners = new Set<() => void>();
-let currentAppearance: Appearance = 'system';
+/** Dark is the site default until the visitor picks otherwise. */
+const DEFAULT_APPEARANCE: Appearance = 'dark';
+let currentAppearance: Appearance = DEFAULT_APPEARANCE;
 
 const prefersDark = (): boolean => {
     if (typeof window === 'undefined') {
@@ -31,10 +33,12 @@ const setCookie = (name: string, value: string, days = 365): void => {
 
 const getStoredAppearance = (): Appearance => {
     if (typeof window === 'undefined') {
-        return 'system';
+        return DEFAULT_APPEARANCE;
     }
 
-    return (localStorage.getItem('appearance') as Appearance) || 'system';
+    const stored = localStorage.getItem('appearance');
+
+    return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : DEFAULT_APPEARANCE;
 };
 
 const isDarkMode = (appearance: Appearance): boolean => {
@@ -50,6 +54,8 @@ const applyTheme = (appearance: Appearance): void => {
 
     document.documentElement.classList.toggle('dark', isDark);
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    // zinc-950 / white: matches --background so the mobile browser bar blends in.
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark ? '#09090b' : '#f6f4f1');
 };
 
 const subscribe = (callback: () => void) => {
@@ -76,8 +82,8 @@ export function initializeTheme(): void {
     }
 
     if (!localStorage.getItem('appearance')) {
-        localStorage.setItem('appearance', 'system');
-        setCookie('appearance', 'system');
+        localStorage.setItem('appearance', DEFAULT_APPEARANCE);
+        setCookie('appearance', DEFAULT_APPEARANCE);
     }
 
     currentAppearance = getStoredAppearance();
@@ -91,7 +97,7 @@ export function useAppearance(): UseAppearanceReturn {
     const appearance: Appearance = useSyncExternalStore(
         subscribe,
         () => currentAppearance,
-        () => 'system',
+        () => DEFAULT_APPEARANCE,
     );
 
     const resolvedAppearance: ResolvedAppearance = isDarkMode(appearance) ? 'dark' : 'light';

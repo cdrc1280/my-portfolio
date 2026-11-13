@@ -1,103 +1,43 @@
-import { Link, usePage } from '@inertiajs/react';
-import { Menu } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
-import { SocialLinks } from '@/components/shared/social-links';
-import { ThemeToggle } from '@/components/shared/theme-toggle';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { useCurrentUrl } from '@/hooks/use-current-url';
-import { publicNavigation } from '@/layouts/public/navigation';
-import { cn, toUrl } from '@/lib/utils';
-import { home } from '@/routes';
+import { AssistantWidget } from '@/components/custom/assistant/assistant-widget';
+import { DotFieldBackground } from '@/components/custom/dot-field-background';
+import { PageSkeleton } from '@/components/custom/page-skeleton';
+import { SiteFooter } from '@/components/custom/site-footer';
+import { SiteHeader } from '@/components/custom/site-header';
+import { usePageTransition } from '@/hooks/use-page-transition';
 
-/** Portfolio-facing shell: slim header, centred content column, footer. */
+/**
+ * Public shell for the "Engineer's case study" theme: sticky header, content, footer, and the
+ * interactive dot-field backdrop. Follows the dark (default) / light toggle. Body copy is muted;
+ * headings opt into `text-foreground`.
+ */
 export default function PublicLayout({ children }: { children: ReactNode }) {
     const { site } = usePage().props;
+    const pendingPath = usePageTransition();
 
     return (
-        <div className="flex min-h-svh flex-col">
+        <div className="relative isolate flex min-h-svh flex-col bg-background font-sans text-muted-foreground antialiased">
+            <DotFieldBackground />
+
             <a
                 href="#main"
-                className="sr-only rounded-md bg-background px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:ring-2 focus:ring-ring"
+                className="sr-only rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[80]"
             >
                 Skip to content
             </a>
 
-            <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-                <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-6 px-4 sm:px-6">
-                    <Link href={home()} className="font-semibold tracking-tight">
-                        {site.name}
-                    </Link>
+            <SiteHeader name={site.name} />
 
-                    <div className="flex items-center gap-1">
-                        <nav aria-label="Main" className="hidden sm:block">
-                            <NavLinks />
-                        </nav>
-                        <ThemeToggle />
-                        <MobileMenu />
-                    </div>
-                </div>
-            </header>
-
-            <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
-                {children}
+            <main id="main" className="flex-1">
+                {pendingPath && <PageSkeleton path={pendingPath} />}
+                {/* Kept mounted (just hidden) so a cancelled visit doesn't lose state such as form input. */}
+                <div hidden={pendingPath !== null}>{children}</div>
             </main>
 
-            <footer className="border-t">
-                <div className="mx-auto flex max-w-5xl flex-col-reverse gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                    <p>
-                        © {new Date().getFullYear()} {site.name}
-                    </p>
-                    <SocialLinks className="-ml-2 sm:ml-0" />
-                </div>
-            </footer>
+            <SiteFooter name={site.name} />
+
+            {site.assistant_enabled && <AssistantWidget />}
         </div>
-    );
-}
-
-function NavLinks({ vertical = false }: { vertical?: boolean }) {
-    const { isCurrentOrParentUrl } = useCurrentUrl();
-
-    return (
-        <ul className={cn('flex gap-1', vertical && 'flex-col')}>
-            {publicNavigation.map((item) => {
-                const active = isCurrentOrParentUrl(item.href);
-
-                return (
-                    <li key={toUrl(item.href)}>
-                        <Link
-                            href={item.href}
-                            aria-current={active ? 'page' : undefined}
-                            className={cn(
-                                'block rounded-md px-3 py-2 text-sm transition-colors hover:text-foreground',
-                                active ? 'font-medium text-foreground' : 'text-muted-foreground',
-                            )}
-                        >
-                            {item.title}
-                        </Link>
-                    </li>
-                );
-            })}
-        </ul>
-    );
-}
-
-function MobileMenu() {
-    return (
-        <Sheet>
-            <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="sm:hidden" aria-label="Open menu">
-                    <Menu className="size-5" aria-hidden />
-                </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-64">
-                <SheetHeader>
-                    <SheetTitle>Menu</SheetTitle>
-                </SheetHeader>
-                <nav aria-label="Mobile" className="px-2">
-                    <NavLinks vertical />
-                </nav>
-            </SheetContent>
-        </Sheet>
     );
 }

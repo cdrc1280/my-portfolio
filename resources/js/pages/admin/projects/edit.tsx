@@ -1,13 +1,13 @@
 import { Head, Link, setLayoutProps } from '@inertiajs/react';
 import { ExternalLink } from 'lucide-react';
-import { PageHeader } from '@/components/shared/page-header';
+import { PageHeader } from '@/components/custom/page-header';
 import { Button } from '@/components/ui/button';
-import { ProjectForm } from '@/features/projects/components/project-form';
-import { ProjectStatusBadge } from '@/features/projects/components/project-status-badge';
-import type { AdminProject, ProjectStatus } from '@/features/projects/types';
 import { edit, index } from '@/routes/admin/projects';
 import { show } from '@/routes/projects';
 import type { SelectOption, Tag } from '@/types';
+import type { AdminProject, ProjectStatus } from '@/types/domains/projects';
+import { ProjectForm } from './project-form';
+import { ProjectStatusBadge } from './project-status-badge';
 
 type Props = {
     project: AdminProject;

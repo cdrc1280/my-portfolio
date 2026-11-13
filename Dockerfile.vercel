@@ -1,0 +1,85 @@
+# syntax=docker/dockerfile:1
+#
+# Vercel image (Container Runtime): FrankenPHP serves Laravel, a bundled Node SSR server pre-renders
+# pages, and `php artisan app:release` migrates/seeds on start. Vercel picks this file over the
+# regular docker/php/Dockerfile (used for local Docker and self-hosting). See docs/operations/vercel.md.
+
+# ---------------------------------------------------------------------------
+# base: FrankenPHP (PHP 8.4 + Caddy) with the extensions the app needs
+# ---------------------------------------------------------------------------
+FROM dunglas/frankenphp:1-php8.4-alpine AS base
+
+RUN install-php-extensions bcmath exif gd intl opcache pcntl pdo_mysql pdo_pgsql zip \
+    && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY docker/php/conf.d/prod.ini "$PHP_INI_DIR/conf.d/zz-app.ini"
+
+WORKDIR /app
+
+# ---------------------------------------------------------------------------
+# vendor: production Composer dependencies
+# ---------------------------------------------------------------------------
+FROM composer:2 AS vendor
+
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --no-scripts --no-autoloader --prefer-dist --ignore-platform-reqs
+COPY . .
+RUN composer dump-autoload --no-dev --optimize --classmap-authoritative --no-scripts
+
+# ---------------------------------------------------------------------------
+# assets: client build + self-contained SSR bundle (Wayfinder needs `php artisan`)
+# ---------------------------------------------------------------------------
+FROM base AS assets
+
+RUN apk add --no-cache nodejs npm
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+COPY --from=vendor /app/vendor ./vendor
+RUN cp .env.example .env && php artisan key:generate --force \
+    && npm run build:ssr \
+    && rm .env
+
+# ---------------------------------------------------------------------------
+# runtime
+# ---------------------------------------------------------------------------
+FROM base AS runtime
+
+# Node only runs the SSR bundle, which has its dependencies bundled in (no node_modules).
+RUN apk add --no-cache nodejs
+
+COPY --chown=www-data:www-data . .
+COPY --chown=www-data:www-data --from=vendor /app/vendor ./vendor
+COPY --chown=www-data:www-data --from=assets /app/public/build ./public/build
+COPY --chown=www-data:www-data --from=assets /app/bootstrap/ssr ./bootstrap/ssr
+COPY docker/vercel/Caddyfile /etc/frankenphp/Caddyfile
+
+# Caches that don't depend on runtime env vars (config stays uncached: Vercel injects env at start).
+RUN rm -rf tests docs \
+    && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && php artisan package:discover --ansi \
+    && php artisan event:cache && php artisan view:cache && php artisan route:cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
+    && chown -R www-data:www-data /config/caddy /data/caddy
+
+# Defaults for Vercel; anything set in the Vercel project's Environment Variables overrides these.
+ENV PORT=80 \
+    APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr \
+    LOG_LEVEL=warning \
+    DB_CONNECTION=pgsql \
+    CACHE_STORE=database \
+    SESSION_DRIVER=database \
+    SESSION_ENCRYPT=true \
+    SESSION_SECURE_COOKIE=true \
+    QUEUE_CONNECTION=sync \
+    MEDIA_DISK=database \
+    MAIL_MAILER=log \
+    INERTIA_SSR_URL=http://127.0.0.1:13714
+
+USER www-data
+
+CMD ["sh", "/app/docker/vercel/start.sh"]

@@ -13,6 +13,8 @@ declare module '@inertiajs/core' {
             name: string;
             appUrl: string;
             site: SiteProfile;
+            /** Which optional public pages have content (they are left out of navigation when empty). */
+            content: { services: boolean; uses: boolean };
             auth: Auth;
             sidebarOpen: boolean;
             [key: string]: unknown;

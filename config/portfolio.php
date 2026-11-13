@@ -11,9 +11,8 @@ return [
 
     'contact' => [
         'notify_email' => env('CONTACT_NOTIFICATION_EMAIL', env('MAIL_FROM_ADDRESS')),
-        // Per-IP limits for the public form.
-        'per_minute' => 3,
-        'per_day' => 20,
+        // Per-IP limit for the public form.
+        'per_hour' => 3,
     ],
 
     /*
@@ -26,6 +25,38 @@ return [
         'username' => env('GITHUB_USERNAME'),
         'token' => env('GITHUB_TOKEN'),
         'cache_minutes' => 60,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Calendly (admin dashboard: upcoming calls)
+    |--------------------------------------------------------------------------
+    | A personal access token from Calendly → Integrations → API & Webhooks.
+    | Without it the dashboard simply shows how to connect.
+    */
+
+    'calendly' => [
+        'token' => env('CALENDLY_TOKEN'),
+        'cache_minutes' => 10,
+        'limit' => 8,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Analytics (public pages only, off until configured)
+    |--------------------------------------------------------------------------
+    | Cookie-free analytics, so no consent banner is needed.
+    | - Plausible: ANALYTICS_PROVIDER=plausible, ANALYTICS_SITE_ID=<your domain>
+    | - Umami:     ANALYTICS_PROVIDER=umami, ANALYTICS_SITE_ID=<website id>,
+    |              ANALYTICS_SCRIPT_URL=<your Umami script.js URL>
+    | Custom events (contact brief sent, call booked, résumé downloaded) are sent via
+    | resources/js/lib/analytics.ts.
+    */
+
+    'analytics' => [
+        'provider' => env('ANALYTICS_PROVIDER'),
+        'site_id' => env('ANALYTICS_SITE_ID'),
+        'script_url' => env('ANALYTICS_SCRIPT_URL'),
     ],
 
     /*

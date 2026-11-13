@@ -1,9 +1,9 @@
 import { Head } from '@inertiajs/react';
-import { PageHeader } from '@/components/shared/page-header';
-import { ProjectForm } from '@/features/projects/components/project-form';
-import type { ProjectStatus } from '@/features/projects/types';
+import { PageHeader } from '@/components/custom/page-header';
 import { create, index } from '@/routes/admin/projects';
 import type { SelectOption, Tag } from '@/types';
+import type { ProjectStatus } from '@/types/domains/projects';
+import { ProjectForm } from './project-form';
 
 type Props = {
     tags: Tag[];

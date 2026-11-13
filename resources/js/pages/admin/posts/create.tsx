@@ -1,9 +1,9 @@
 import { Head } from '@inertiajs/react';
-import { PageHeader } from '@/components/shared/page-header';
-import { PostForm } from '@/features/blog/components/post-form';
-import type { PostStatus } from '@/features/blog/types';
+import { PageHeader } from '@/components/custom/page-header';
 import { create, index } from '@/routes/admin/posts';
 import type { SelectOption, Tag } from '@/types';
+import type { PostStatus } from '@/types/domains/blog';
+import { PostForm } from './post-form';
 
 type Props = {
     tags: Tag[];

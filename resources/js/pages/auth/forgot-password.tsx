@@ -1,8 +1,9 @@
 // Components
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
+import InputError from '@/components/custom/input-error';
+import { RequiredMark } from '@/components/custom/required-mark';
+import TextLink from '@/components/custom/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,13 +18,17 @@ export default function ForgotPassword({ status }: { status?: string }) {
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
 
             <div className="space-y-6">
-                <Form {...email.form()}>
+                <Form {...email.form()} noValidate>
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">
+                                    Email address
+                                    <RequiredMark />
+                                </Label>
                                 <Input
                                     id="email"
+                                    required
                                     type="email"
                                     name="email"
                                     autoComplete="off"

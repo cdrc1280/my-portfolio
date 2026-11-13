@@ -43,3 +43,9 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Vercel deploy secrets (APP_KEY), never committed
+.env.vercel.local
+
+# Local code-analysis output (graphify)
+/graphify-out

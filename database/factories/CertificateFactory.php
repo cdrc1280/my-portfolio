@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Domain\Experience\Models\Certificate;
+use App\Domains\Experience\Models\Certificate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

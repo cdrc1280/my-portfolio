@@ -1,7 +1,7 @@
 <?php
 
-use App\Domain\GitHub\DataTransferObjects\GitHubActivityData;
-use App\Domain\Profile\DataTransferObjects\SiteProfileData;
+use App\Domains\GitHub\ValueObjects\GitHubActivityData;
+use App\Domains\Profile\ValueObjects\SiteProfileData;
 use Illuminate\Support\Str;
 
 return [

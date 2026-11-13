@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Domain\Profile\Actions\GetProfileAction;
-use App\Http\Resources\UserResource;
+use App\Domains\Account\Resources\UserResource;
+use App\Domains\Profile\Actions\GetProfileAction;
+use App\Domains\Services\Models\Service;
+use App\Domains\Uses\Models\UsesItem;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,8 +44,13 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'appUrl' => rtrim((string) config('app.url'), '/'),
             'site' => fn () => app(GetProfileAction::class)->snapshot()->toArray(),
+            // Which optional public pages have content, so navigation never links to an empty page.
+            'content' => fn () => [
+                'services' => Service::query()->exists(),
+                'uses' => UsesItem::query()->exists(),
+            ],
             'auth' => [
-                'user' => fn () => $request->user() ? UserResource::make($request->user())->resolve($request) : null,
+                'user' => fn () => $request->user() ? UserResource::fromModel($request->user())->toArray() : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

@@ -2,6 +2,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -34,24 +35,63 @@ const buttonVariants = cva(
   }
 )
 
+/** The accessible name of an icon button: its own aria-label, or its child's when `asChild`. */
+function iconLabel(
+  props: React.ComponentProps<"button">,
+  asChild: boolean
+): string | undefined {
+  if (typeof props["aria-label"] === "string") {
+    return props["aria-label"]
+  }
+
+  if (asChild && React.isValidElement<{ "aria-label"?: unknown }>(props.children)) {
+    const label = props.children.props["aria-label"]
+
+    return typeof label === "string" ? label : undefined
+  }
+
+  return undefined
+}
+
+/**
+ * shadcn Button. Icon-only buttons (`size="icon"`) show their aria-label as a tooltip so sighted
+ * mouse and keyboard users get the same name screen readers do. Pass `tooltip` to override the
+ * text, or `tooltip={false}` to opt out.
+ */
 function Button({
   className,
   variant,
   size,
   asChild = false,
+  tooltip,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    tooltip?: string | false
   }) {
   const Comp = asChild ? Slot : "button"
-
-  return (
+  const button = (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
+  )
+  const label =
+    tooltip === false
+      ? undefined
+      : (tooltip ?? (size === "icon" ? iconLabel(props, asChild) : undefined))
+
+  if (!label) {
+    return button
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   )
 }
 

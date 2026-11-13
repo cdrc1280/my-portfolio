@@ -58,6 +58,9 @@ fix: ## Auto-fix code style (Pint, ESLint, Prettier)
 
 ci: lint test ## Everything CI runs
 
+hooks: ## Enable the git pre-push hook (runs the test suite before every push)
+	sh scripts/setup-git-hooks.sh
+
 build-assets: ## Production asset build
 	$(RUN) npm run build
 

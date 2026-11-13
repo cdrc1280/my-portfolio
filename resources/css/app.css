@@ -9,10 +9,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-    --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@theme inline {
+    --font-sans: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -55,6 +54,8 @@
     --color-brand: var(--brand);
     --color-brand-foreground: var(--brand-foreground);
 
+    --color-border-strong: var(--border-strong);
+
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -65,80 +66,87 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/*
+ * Theme: "Engineer's case study". shadcn zinc base, one emerald accent.
+ * `--primary` IS the accent: primary CTAs, links, focus rings, active states, small highlights.
+ * Body copy uses `--muted-foreground`; headings use `--foreground`.
+ *
+ * Light-mode accent is emerald-700, not emerald-600: emerald-600 on white is 3.8:1 and fails WCAG AA
+ * for text (links, button labels). emerald-700 is 5.5:1 on white and stays above 4.5:1 on the off-white page.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --background: oklch(0.968 0.005 90); /* soft off-white (#f5f4f0): easier on the eyes than pure white */
+    --foreground: oklch(0.141 0.005 285.823); /* zinc-950 */
+    --card: oklch(0.984 0.004 90); /* a step lighter than the page, still not pure white */
+    --card-foreground: oklch(0.141 0.005 285.823);
+    --popover: oklch(0.984 0.004 90);
+    --popover-foreground: oklch(0.141 0.005 285.823);
+    --primary: oklch(0.508 0.118 165.612); /* emerald-700 */
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(0.935 0.006 90);
+    --secondary-foreground: oklch(0.21 0.006 285.885);
+    --muted: oklch(0.935 0.006 90);
+    --muted-foreground: oklch(0.442 0.017 285.786); /* zinc-600 */
+    --accent: oklch(0.935 0.006 90); /* shadcn "accent" = neutral hover surface */
+    --accent-foreground: oklch(0.21 0.006 285.885);
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.52 0.16 258 / 0.45);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    /* The single accent colour: links, focus rings, key highlights. */
-    --brand: oklch(0.52 0.16 258);
-    --brand-foreground: oklch(0.985 0 0);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --border: oklch(0.895 0.007 85);
+    --border-strong: oklch(0.84 0.008 85); /* hover */
+    --input: oklch(0.895 0.007 85);
+    --ring: oklch(0.508 0.118 165.612);
+    --chart-1: oklch(0.508 0.118 165.612);
+    --chart-2: oklch(0.552 0.016 285.938);
+    --chart-3: oklch(0.37 0.013 285.805);
+    --chart-4: oklch(0.705 0.015 286.067);
+    --chart-5: oklch(0.871 0.006 286.286);
+    --radius: 0.5rem;
+    --brand: var(--primary);
+    --brand-foreground: var(--primary-foreground);
+    --sidebar: oklch(0.955 0.006 90);
+    --sidebar-foreground: oklch(0.141 0.005 285.823);
+    --sidebar-primary: oklch(0.508 0.118 165.612);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.925 0.007 90);
+    --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+    --sidebar-border: oklch(0.895 0.007 85);
+    --sidebar-ring: oklch(0.508 0.118 165.612);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
+    --background: oklch(0.141 0.005 285.823); /* zinc-950 */
+    --foreground: oklch(0.985 0 0); /* zinc-50 */
+    --card: oklch(0.21 0.006 285.885 / 0.5); /* zinc-900/50 */
     --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
+    --popover: oklch(0.21 0.006 285.885);
     --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
+    --primary: oklch(0.696 0.17 162.48); /* emerald-500 */
+    --primary-foreground: oklch(0.141 0.005 285.823);
+    --secondary: oklch(0.274 0.006 286.033); /* zinc-800 */
     --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
+    --muted: oklch(0.21 0.006 285.885); /* zinc-900 */
+    --muted-foreground: oklch(0.705 0.015 286.067); /* zinc-400 */
+    --accent: oklch(0.274 0.006 286.033);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.396 0.141 25.723);
     --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.72 0.13 258 / 0.5);
-    --brand: oklch(0.72 0.13 258);
-    --brand-foreground: oklch(0.145 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
+    --border: oklch(0.274 0.006 286.033); /* zinc-800 */
+    --border-strong: oklch(0.37 0.013 285.805); /* zinc-700, hover */
+    --input: oklch(0.274 0.006 286.033);
+    --ring: oklch(0.696 0.17 162.48);
+    --chart-1: oklch(0.696 0.17 162.48);
+    --chart-2: oklch(0.705 0.015 286.067);
+    --chart-3: oklch(0.552 0.016 285.938);
+    --chart-4: oklch(0.442 0.017 285.786);
+    --chart-5: oklch(0.37 0.013 285.805);
+    --sidebar: oklch(0.141 0.005 285.823);
     --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-primary: oklch(0.696 0.17 162.48);
+    --sidebar-primary-foreground: oklch(0.141 0.005 285.823);
+    --sidebar-accent: oklch(0.21 0.006 285.885);
     --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --sidebar-border: oklch(0.274 0.006 286.033);
+    --sidebar-ring: oklch(0.696 0.17 162.48);
 }
 
 @layer base {
@@ -146,12 +154,62 @@
         @apply border-border;
     }
 
+    html {
+        scroll-behavior: smooth;
+    }
+
     body {
         @apply bg-background text-foreground;
     }
 
-    html {
-        scroll-behavior: smooth;
+    ::selection {
+        background: color-mix(in oklch, var(--primary) 30%, transparent);
+    }
+
+    /* Tailwind v4 resets buttons to the default cursor; everything clickable gets the pointer back. */
+    a[href],
+    button:not(:disabled),
+    summary,
+    label[for],
+    [role='button']:not([aria-disabled='true']),
+    [role='tab'],
+    [role='option'],
+    [role='menuitem'],
+    [role='menuitemcheckbox'],
+    [role='menuitemradio'],
+    [role='switch'],
+    [role='checkbox'],
+    [role='combobox'] {
+        cursor: pointer;
+    }
+
+    :disabled,
+    [aria-disabled='true'] {
+        cursor: not-allowed;
+    }
+
+    /* Accent focus ring for anything that doesn't style its own (shadcn controls do). */
+    /* The server-rendered boot skeleton (resources/views/partials/boot-skeleton.blade.php) hides
+       as soon as React has rendered into #app. */
+    body:has(#app > *) .boot-skeleton {
+        display: none;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
+
+    h1,
+    h2,
+    h3 {
+        text-wrap: balance;
+    }
+
+    p,
+    li,
+    dd {
+        text-wrap: pretty;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -163,7 +221,57 @@
         *::before,
         *::after {
             animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
         }
+    }
+}
+
+/*
+ * Syntax highlighting for fenced code blocks (server-rendered by tempest/highlight, see
+ * App\Domain\Shared\Support\Markdown). Built from the theme tokens so it follows dark/light mode;
+ * only keywords use the accent.
+ */
+@layer components {
+    .prose pre[data-lang] {
+        @apply overflow-x-auto font-mono text-[13px] leading-6;
+    }
+
+    .hl-keyword {
+        color: var(--primary);
+    }
+
+    .hl-type,
+    .hl-generic {
+        color: var(--foreground);
+        font-weight: 500;
+    }
+
+    .hl-property,
+    .hl-attribute {
+        color: var(--foreground);
+    }
+
+    .hl-value,
+    .hl-number,
+    .hl-literal {
+        color: color-mix(in oklch, var(--primary) 55%, var(--foreground));
+    }
+
+    .hl-variable {
+        color: var(--foreground);
+    }
+
+    .hl-comment {
+        color: var(--muted-foreground);
+        font-style: italic;
+    }
+
+    .hl-addition {
+        background-color: color-mix(in oklch, var(--primary) 15%, transparent);
+    }
+
+    .hl-deletion {
+        background-color: color-mix(in oklch, var(--destructive) 15%, transparent);
     }
 }

@@ -1,7 +1,7 @@
 import { Form, Head, setLayoutProps } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { useMemo, useState } from 'react';
-import InputError from '@/components/input-error';
+import InputError from '@/components/custom/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
@@ -48,7 +48,13 @@ export default function TwoFactorChallenge() {
             <Head title="Two-factor authentication" />
 
             <div className="space-y-6">
-                <Form {...store.form()} className="space-y-4" resetOnError resetOnSuccess={!showRecoveryInput}>
+                <Form
+                    {...store.form()}
+                    className="space-y-4"
+                    resetOnError
+                    resetOnSuccess={!showRecoveryInput}
+                    noValidate
+                >
                     {({ errors, processing, clearErrors }) => (
                         <>
                             {showRecoveryInput ? (

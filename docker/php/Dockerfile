@@ -5,11 +5,11 @@
 # ---------------------------------------------------------------------------
 FROM php:8.4-fpm-alpine AS base
 
-RUN apk add --no-cache icu-libs libzip libpng libjpeg-turbo freetype libwebp \
+RUN apk add --no-cache icu-libs libzip libpng libjpeg-turbo freetype libwebp libpq \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev libzip-dev libpng-dev \
-        libjpeg-turbo-dev freetype-dev libwebp-dev linux-headers \
+        libjpeg-turbo-dev freetype-dev libwebp-dev linux-headers postgresql-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j"$(nproc)" bcmath exif gd intl opcache pcntl pdo_mysql zip \
+    && docker-php-ext-install -j"$(nproc)" bcmath exif gd intl opcache pcntl pdo_mysql pdo_pgsql zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del .build-deps \
@@ -62,7 +62,7 @@ RUN npm ci
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
 RUN cp .env.example .env && php artisan key:generate --force \
-    && npm run build \
+    && npm run build:ssr \
     && rm .env
 
 # ---------------------------------------------------------------------------
@@ -87,6 +87,22 @@ USER www-data
 
 ENTRYPOINT ["entrypoint"]
 CMD ["php-fpm"]
+
+# ---------------------------------------------------------------------------
+# ssr: Node server that pre-renders Inertia pages (so search engines and link
+# previews see real HTML). The bundle keeps its npm dependencies external.
+# ---------------------------------------------------------------------------
+FROM node:24-alpine AS ssr
+
+WORKDIR /var/www/html
+ENV NODE_ENV=production
+COPY --from=assets /app/package.json ./package.json
+COPY --from=assets /app/node_modules ./node_modules
+COPY --from=assets /app/bootstrap/ssr ./bootstrap/ssr
+
+USER node
+EXPOSE 13714
+CMD ["node", "bootstrap/ssr/app.js"]
 
 # ---------------------------------------------------------------------------
 # web: nginx serving the compiled public/ directory, proxying PHP to `app`

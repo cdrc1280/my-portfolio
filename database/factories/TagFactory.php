@@ -2,7 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Domain\Tags\Models\Tag;
+use App\Domains\Tags\Enums\TagCategory;
+use App\Domains\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -27,5 +28,13 @@ class TagFactory extends Factory
             'name' => $name,
             'slug' => Str::slug($name),
         ];
+    }
+
+    /**
+     * A tag that also appears in the skills section.
+     */
+    public function skill(TagCategory $category = TagCategory::Backend): static
+    {
+        return $this->state(['category' => $category]);
     }
 }

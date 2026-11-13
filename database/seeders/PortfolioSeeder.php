@@ -2,28 +2,33 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Blog\Enums\PostStatus;
-use App\Domain\Blog\Models\Post;
-use App\Domain\Contact\Models\ContactMessage;
-use App\Domain\Experience\Enums\EmploymentType;
-use App\Domain\Experience\Models\Certificate;
-use App\Domain\Experience\Models\Education;
-use App\Domain\Experience\Models\Experience;
-use App\Domain\Profile\Enums\SocialPlatform;
-use App\Domain\Profile\Events\ProfileChanged;
-use App\Domain\Profile\Models\Profile;
-use App\Domain\Profile\Models\SocialLink;
-use App\Domain\Projects\Enums\ProjectStatus;
-use App\Domain\Projects\Models\Project;
-use App\Domain\Skills\Models\SkillCategory;
-use App\Domain\Tags\Models\Tag;
+use App\Domains\Experience\Enums\EmploymentType;
+use App\Domains\Experience\Models\Certificate;
+use App\Domains\Experience\Models\Education;
+use App\Domains\Experience\Models\Experience;
+use App\Domains\Profile\Enums\AvailabilityStatus;
+use App\Domains\Profile\Enums\SocialPlatform;
+use App\Domains\Profile\Events\ProfileChanged;
+use App\Domains\Profile\Models\Profile;
+use App\Domains\Profile\Models\SocialLink;
+use App\Domains\Projects\Enums\ProjectStatus;
+use App\Domains\Projects\Models\Project;
+use App\Domains\Projects\Support\FolderTree;
+use App\Domains\Services\Models\Service;
+use App\Domains\Tags\Enums\TagCategory;
+use App\Domains\Tags\Models\Tag;
+use App\Shared\Actions\StoreUploadedFileAction;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * Realistic sample content, ported from the previous version of the site.
- * Images are remote placeholders or files in public/, so nothing has to
- * exist on the media disk.
+ * Real portfolio content only. Everything here comes from the résumé, except:
+ * - project live URLs, tech stacks and screenshots (from the previous portfolio, confirmed by the owner);
+ * - the "Developer portfolio & CMS" case study, which describes this repository and can be checked against it.
+ *
+ * Nothing is invented: no testimonials, rates, engagement types, process steps, blog posts, sample
+ * messages or metrics. Fill those in through the admin when they are real.
  */
 class PortfolioSeeder extends Seeder
 {
@@ -33,8 +38,8 @@ class PortfolioSeeder extends Seeder
         $this->seedSkills();
         $this->seedProjects();
         $this->seedExperience();
-        $this->seedPosts();
-        $this->seedMessages();
+        $this->seedServices();
+        $this->attachResume();
 
         ProfileChanged::dispatch();
     }
@@ -43,21 +48,32 @@ class PortfolioSeeder extends Seeder
     {
         Profile::query()->updateOrCreate([], [
             'name' => 'Cedric James Leala',
-            'headline' => 'Full-stack developer',
-            'tagline' => 'I build and maintain production web systems end to end — schema, API and UI — with Laravel, Filament, Vue and React, using AI-assisted workflows to ship fast without sacrificing maintainability.',
+            'headline' => 'Full-Stack Web Developer',
+            'tagline' => 'Full-stack web developer building with Laravel, React and TypeScript.',
+            'short_bio' => 'Full-Stack Web Developer with 3+ years of experience building and maintaining government web applications using Laravel, Filament, Vue.js, React, Inertia.js and TypeScript.',
             'bio' => <<<'MD'
-                I'm a full-stack developer with three years of experience shipping and maintaining **six concurrently running production systems** for TESDA, owning each one end to end: database schema, API and user interface.
+                Full-Stack Web Developer with 3+ years of experience building and maintaining government web applications using **Laravel, Filament, Vue.js, React, Inertia.js and TypeScript**.
 
-                My core stack is **Laravel, Filament, Vue.js and MySQL**, with additional front-end experience in **React, TypeScript and Inertia.js** from freelance work.
+                Experienced in MySQL database design and optimization, API development, Git workflows, and Docker and AWS-based deployments. Delivered national-scale systems including a multi-agency profiling platform, a learning management system and a document tracking system.
 
-                I use Claude Code and other AI coding assistants as part of a daily build–test–ship workflow. That lets me move quickly on scaffolding and debugging while I spend my attention on architecture, data modelling and the details users actually notice.
-
-                I'm comfortable taking a scoped problem from requirements to working, production-ready software on my own — and equally happy working inside a team's conventions.
+                Uses AI coding tools (Claude Code, ChatGPT, Copilot) to speed up development.
                 MD,
-            'location' => 'Sitio Gulod Muzon, Taytay, Rizal 1920',
+            'location' => 'Taytay, Rizal, Philippines',
+            'timezone' => 'UTC+8 (Philippine time)',
             'email' => 'cedricjamesleala128@gmail.com',
-            'phone' => '0938-854-2688',
-            'availability' => 'Available for full-stack & Laravel work',
+            'phone' => '+63 938 854 2688',
+            'availability_status' => AvailabilityStatus::Available,
+            'availability' => 'Open to part-time contracts',
+            'working_hours' => null,
+            'response_time' => null,
+            'booking_url' => null,
+            'currently_learning' => null,
+            'starting_rate' => null,
+            'engagement_types' => null,
+            'process_steps' => null,
+            'blog_enabled' => false,
+            'seo_title' => 'Cedric James Leala · Full-Stack Web Developer',
+            'seo_description' => 'Full-stack web developer in Taytay, Rizal, Philippines with 3+ years building government web applications with Laravel, React and TypeScript.',
             'avatar_path' => '/images/cedric-profile.jpg',
         ]);
 
@@ -71,19 +87,27 @@ class PortfolioSeeder extends Seeder
         }
     }
 
+    /**
+     * The résumé's "Technical skills" section, in its order.
+     */
     private function seedSkills(): void
     {
         $groups = [
-            'Core stack' => ['Laravel', 'Laravel Filament', 'Vue.js', 'Tailwind CSS', 'JavaScript', 'MySQL', 'HTML, CSS & SCSS', 'Git & GitHub'],
-            'Also worked with' => ['React', 'TypeScript', 'Inertia.js', 'REST APIs', 'Livewire', 'Alpine.js', 'Bootstrap', 'CodeIgniter'],
-            'AI-assisted development' => ['Claude Code', 'ChatGPT', 'Gemini'],
+            TagCategory::Backend->value => ['PHP', 'Laravel', 'Filament', 'CodeIgniter', 'REST APIs'],
+            TagCategory::Database->value => ['MySQL'],
+            TagCategory::Frontend->value => ['JavaScript', 'TypeScript', 'React', 'Vue.js', 'Inertia.js', 'HTML5', 'CSS3', 'SCSS', 'Tailwind CSS', 'Bootstrap', 'jQuery'],
+            TagCategory::DevopsTools->value => ['Git', 'Docker', 'AWS', 'Linux', 'Navicat Premium'],
+            TagCategory::AiTools->value => ['Claude', 'Claude Code', 'ChatGPT', 'Gemini', 'GitHub Copilot', 'Antigravity'],
         ];
 
-        foreach (array_keys($groups) as $position => $name) {
-            $category = SkillCategory::query()->updateOrCreate(['name' => $name], ['position' => $position + 1]);
+        $position = 0;
 
-            foreach ($groups[$name] as $skillPosition => $skill) {
-                $category->skills()->updateOrCreate(['name' => $skill], ['position' => $skillPosition + 1]);
+        foreach ($groups as $category => $names) {
+            foreach ($names as $name) {
+                Tag::query()->updateOrCreate(
+                    ['slug' => Str::slug($name)],
+                    ['name' => $name, 'category' => $category, 'position' => ++$position],
+                );
             }
         }
     }
@@ -93,101 +117,44 @@ class PortfolioSeeder extends Seeder
         $projects = [
             [
                 'title' => 'TESDA Profiling MIS',
-                'summary' => 'National profiling system with multi-agency access, scholarship management and real-time analytics.',
-                'role' => 'Full-stack developer',
-                'period' => '2023 – 2026',
+                'summary' => 'National profiling system with multi-agency access and real-time analytics.',
                 'live_url' => 'https://mis.tesda-clgeo.com',
-                'cover' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
-                'gallery' => [
-                    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop',
-                    'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=1200&auto=format&fit=crop',
-                ],
                 'tags' => ['Laravel', 'Filament', 'Vue.js', 'MySQL', 'Tailwind CSS'],
-                'highlights' => [
-                    'Multi-agency role-based access control',
-                    'Real-time scholarship profiling and analytics',
-                    'MySQL indexing for sub-second profiling queries',
-                    'Filament administrative dashboards',
-                ],
-                'body' => [
-                    'Overview' => 'Built and maintained with Laravel, Filament and Vue.js. The system automates database operations for national scholarship programmes, gates access per agency and role, and keeps profiling queries fast across a large and growing dataset.',
-                    'Architecture' => 'A Laravel back end serves the Vue.js front end, while Filament powers the administrative side for staff who manage records day to day.',
-                    'Challenge' => 'Aggregating data from multiple agencies while keeping profiling queries under a second across thousands of records.',
-                    'Approach' => 'Designed targeted MySQL indexes and moved heavy work into chunked query pipelines, so reports stay responsive as data grows.',
-                    'What I learned' => 'Pairing Filament with AI-assisted scaffolding dramatically shortens the time it takes to deliver dependable internal dashboards.',
-                ],
                 'featured' => true,
             ],
+            $this->portfolioCaseStudy(),
             [
-                'title' => 'CBTVETO Landing Site & Directory',
-                'summary' => 'Public LMS portal, TESDA directory and automated document verification.',
-                'role' => 'Full-stack developer',
-                'period' => '2024',
+                'title' => 'CBTVETO Landing Site',
+                'summary' => 'Public LMS, TESDA directory and document verification system.',
                 'live_url' => 'https://tesda-clgeo.com',
-                'cover' => 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop',
-                'gallery' => ['https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1200&auto=format&fit=crop'],
+                'cover' => '/images/projects/cbtveto-desktop.jpg',
+                'gallery' => ['/images/projects/cbtveto-services.jpg', '/images/projects/cbtveto-mobile.jpg'],
                 'tags' => ['Laravel', 'Vue.js', 'Tailwind CSS', 'MySQL', 'REST APIs'],
-                'highlights' => ['Public institutional directory', 'Certificate verification engine', 'Responsive Vue.js + Tailwind UI'],
-                'body' => [
-                    'Overview' => 'A public-facing directory and verification platform serving TESDA institutions, trainers and students, including real-time certificate validation.',
-                ],
-                'featured' => true,
-            ],
-            [
-                'title' => 'National Directory for CTECs',
-                'summary' => "Trainers' profiles, association management and a national achievement tracker.",
-                'role' => 'Full-stack developer',
-                'period' => '2024',
-                'live_url' => 'https://ctec.tesda-clgeo.com',
-                'cover' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop',
-                'tags' => ['Laravel', 'Filament', 'Vue.js', 'MySQL'],
-                'highlights' => ['Regional trainer profiles', 'Association memberships', 'Achievement milestones'],
-                'body' => [
-                    'Overview' => 'A centralised directory for community technical education centre (CTEC) trainers, their association memberships and achievement milestones across regions.',
-                ],
                 'featured' => true,
             ],
             [
                 'title' => 'CBTVET Learning Management System',
-                'summary' => 'Student enrolment, courses and learning-materials portal.',
-                'role' => 'Full-stack developer',
-                'period' => '2023 – 2024',
+                'summary' => 'Student enrollment, courses and learning materials management.',
                 'live_url' => 'https://lms.cbtveto.com',
-                'cover' => 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=1200&auto=format&fit=crop',
                 'tags' => ['Laravel', 'Vue.js', 'Tailwind CSS', 'MySQL'],
-                'highlights' => ['Student registration', 'Course uploads', 'Assignment tracking and grading'],
-                'body' => [
-                    'Overview' => 'A full learning management system covering student registration, course uploads, assignment tracking and grade recording.',
-                ],
-                'featured' => true,
             ],
             [
-                'title' => 'Document Tracking System',
-                'summary' => 'Document management and monitoring for government efficiency.',
-                'role' => 'Full-stack developer',
-                'period' => '2023',
-                'live_url' => 'https://dts.tesda-clgeo.com',
-                'cover' => 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?q=80&w=1200&auto=format&fit=crop',
+                'title' => 'National Directory for CTECs',
+                'summary' => 'Trainer profiles, association management and achievement tracker.',
+                'live_url' => 'https://ctec.tesda-clgeo.com',
                 'tags' => ['Laravel', 'Filament', 'Vue.js', 'MySQL'],
-                'highlights' => ['Routing history', 'Status approvals', 'Department hand-offs'],
-                'body' => [
-                    'Overview' => 'Tracks the lifecycle of official memos: routing history, status approvals and hand-offs between departments.',
-                ],
-                'featured' => false,
             ],
             [
-                'title' => 'Legislative Information System',
-                'summary' => 'Tracks legislative activity and budget monitoring for policy planning.',
-                'role' => 'Full-stack developer',
-                'period' => '2024',
+                'title' => 'Document Tracking System (DTS)',
+                'summary' => 'Document management and monitoring system for CLGEO.',
+                'live_url' => 'https://dts.tesda-clgeo.com',
+                'tags' => ['Laravel', 'Filament', 'Vue.js', 'MySQL'],
+            ],
+            [
+                'title' => 'Legislative Information System (LIS)',
+                'summary' => 'Tracks legislative activities and budget monitoring.',
                 'live_url' => 'https://staging-lis.tesda.gov.ph',
-                'cover' => 'https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=1200&auto=format&fit=crop',
                 'tags' => ['Laravel', 'Vue.js', 'Inertia.js', 'TypeScript', 'MySQL'],
-                'highlights' => ['Bill and policy tracking', 'Committee resolutions', 'Budget allocations'],
-                'body' => [
-                    'Overview' => 'Tracks legislative bills, policy updates, committee resolutions and budget allocations relevant to technical education.',
-                ],
-                'featured' => false,
             ],
         ];
 
@@ -195,16 +162,24 @@ class PortfolioSeeder extends Seeder
             $project = Project::query()->updateOrCreate(['slug' => Str::slug($data['title'])], [
                 'title' => $data['title'],
                 'summary' => $data['summary'],
-                'body' => $this->markdownSections($data['body']),
-                'role' => $data['role'],
-                'period' => $data['period'],
-                'highlights' => $data['highlights'],
-                'cover_image' => $data['cover'],
-                'live_url' => $data['live_url'],
-                'repo_url' => null,
+                'problem' => $data['problem'] ?? null,
+                'role' => $data['role'] ?? 'Full-stack developer',
+                'role_details' => $data['role_details'] ?? null,
+                'architecture' => $data['architecture'] ?? null,
+                'architecture_tree' => FolderTree::parse($data['tree'] ?? null) ?: null,
+                'decisions' => $data['decisions'] ?? null,
+                'challenges' => $data['challenges'] ?? null,
+                'results' => $data['results'] ?? null,
+                'metrics' => $data['metrics'] ?? null,
+                'cover_image' => $data['cover'] ?? null,
+                'live_url' => $data['live_url'] ?? null,
+                'repo_url' => $data['repo_url'] ?? null,
+                'is_confidential' => false,
+                'started_on' => null,
+                'ended_on' => null,
                 'status' => ProjectStatus::Published,
-                'is_featured' => $data['featured'],
-                'published_at' => now()->subMonths(count($projects) - $position),
+                'is_featured' => $data['featured'] ?? false,
+                'published_at' => now(),
                 'position' => $position + 1,
             ]);
 
@@ -217,145 +192,199 @@ class PortfolioSeeder extends Seeder
         }
     }
 
+    /**
+     * This site. Every statement below can be checked in this repository.
+     *
+     * @return array<string, mixed>
+     */
+    private function portfolioCaseStudy(): array
+    {
+        return [
+            'title' => 'Developer Portfolio & CMS',
+            'summary' => 'This site: a Laravel, Inertia and React portfolio with its own admin for every page.',
+            'role_details' => <<<'MD'
+                - Designed and built the whole application: data model, admin, public site and deployment setup
+                - Used Claude Code as an AI pair programmer, with every change going through the same lint, type and test checks
+                MD,
+            'problem' => 'A portfolio whose content (projects, experience, skills, services and posts) can be updated from an admin panel, without code changes or redeploys.',
+            'architecture' => <<<'MD'
+                A **Laravel** back end organised by business domain instead of by framework layer. Each module in `app/Domains` owns its models, actions, data transfer objects and policies. Controllers stay thin: validate a form request, call one action, return an Inertia response.
+
+                The front end is **React with TypeScript** over **Inertia.js**, organised by feature, with typed route helpers generated from the Laravel routes.
+
+                Everything runs in **Docker**: PHP-FPM, Nginx, MySQL, Redis, a queue worker and a scheduler.
+                MD,
+            'tree' => <<<'TREE'
+                app/
+                  Domain/  # one folder per module
+                    Projects/
+                      Actions
+                      DataTransferObjects
+                      Models
+                      Policies
+                      QueryBuilders
+                    Blog/
+                    Experience/
+                    Contact/
+                  Http/
+                    Controllers  # thin: request → action → response
+                    Requests  # validation
+                    Resources  # API shape for Inertia
+                resources/
+                  js/
+                    features/  # UI per module
+                    pages/  # Inertia pages
+                    components/
+                tests/
+                  Feature
+                  Unit
+                TREE,
+            'decisions' => <<<'MD'
+                **Actions and DTOs for every write.** Each change (create a project, reorder tags, submit a contact form) is one action class that takes a typed data object, so the same logic is used by controllers and tests.
+
+                **Markdown rendered on the server.** Case studies, posts and the bio are written in Markdown and converted to HTML in PHP, with raw HTML stripped, so the front end never renders untrusted markup.
+
+                **Privacy by default on the contact form.** The sender's IP is stored only as an HMAC, spam is caught with a honeypot, and notification emails are sent from the queue so the form responds instantly.
+                MD,
+            'results' => <<<'MD'
+                - Every page's content is editable in the admin
+                - CI runs Pint, Larastan (level 7), ESLint, Prettier, TypeScript and the Pest suite on every push, then builds the production image
+                MD,
+            'tags' => ['Laravel', 'React', 'TypeScript', 'Inertia.js', 'Tailwind CSS', 'MySQL', 'Docker', 'Pest', 'Claude Code'],
+            'featured' => true,
+        ];
+    }
+
     private function seedExperience(): void
     {
         $roles = [
             [
                 'company' => 'TESDA',
-                'role' => 'IT MIS Developer (Full-stack)',
-                'location' => 'Taguig City, Philippines',
-                'employment_type' => EmploymentType::FullTime,
+                'role' => 'IT MIS Developer (Full Stack)',
+                'location' => 'Taguig, Philippines',
+                'employment_type' => null,
                 'started_on' => '2023-07-01',
-                'ended_on' => null,
-                'summary' => 'Build and maintain six concurrently running national production systems with Laravel, Filament and Vue.js.',
+                'ended_on' => '2026-06-01',
                 'highlights' => [
-                    'Shipped and maintain six concurrent production systems supporting multi-agency access across scholarship, profiling and learning-management platforms.',
-                    'Designed and optimised MySQL operations for scholarship and enrolment systems, improving query performance by around 40%.',
-                    'Own API integrations and Git-based workflows across the whole portfolio of systems.',
-                    'Use Claude Code and other AI tools to scaffold, debug and ship production features independently.',
+                    'Built and maintained web applications using Laravel, Filament and Vue.js for national government programs.',
+                    'Developed and managed APIs and MySQL databases, and maintained Git workflows for team development.',
+                    'Designed and optimized database operations for scholarship management systems.',
+                    'Delivered systems including a national profiling MIS, a learning management system and a document tracking system.',
                 ],
-                'technologies' => ['Laravel', 'Filament', 'Vue.js', 'MySQL', 'Tailwind CSS', 'Git'],
+                'technologies' => ['Laravel', 'Filament', 'Vue.js', 'MySQL', 'Git'],
             ],
             [
                 'company' => 'Keen Eye Software Solutions',
-                'role' => 'Front-end Developer',
-                'location' => 'Remote',
+                'role' => 'Front-End Developer',
+                'location' => null,
                 'employment_type' => EmploymentType::Freelance,
                 'started_on' => '2024-10-01',
                 'ended_on' => '2025-03-01',
-                'summary' => 'Responsive, accessible UI components with React, TypeScript, Tailwind CSS and Inertia.js.',
                 'highlights' => [
-                    'Built responsive, accessible UI components in React, Tailwind CSS and TypeScript.',
-                    'Integrated front-end interfaces with Laravel services via Inertia.js, closing the gap between design hand-off and delivery.',
+                    'Designed responsive user interfaces using React, Tailwind CSS, TypeScript and Inertia.js.',
+                    'Integrated the front end with Laravel back-end services.',
                 ],
-                'technologies' => ['React', 'TypeScript', 'Inertia.js', 'Tailwind CSS', 'Laravel'],
+                'technologies' => ['React', 'Tailwind CSS', 'TypeScript', 'Inertia.js', 'Laravel'],
             ],
             [
                 'company' => 'Point One Integrated Technologies Inc.',
                 'role' => 'Web Developer',
-                'location' => 'Philippines',
-                'employment_type' => EmploymentType::FullTime,
+                'location' => null,
+                'employment_type' => null,
                 'started_on' => '2022-09-01',
                 'ended_on' => '2023-03-01',
-                'summary' => 'Web applications with CodeIgniter, JavaScript and jQuery.',
                 'highlights' => [
-                    'Developed web applications using CodeIgniter, HTML, CSS3, JavaScript and jQuery.',
-                    'Managed databases and version control with Navicat and Git.',
+                    'Developed web applications using CodeIgniter, HTML5, CSS3, JavaScript and jQuery.',
+                    'Managed databases with Navicat Premium and handled version control with Git.',
                 ],
-                'technologies' => ['CodeIgniter', 'JavaScript', 'jQuery', 'MySQL', 'Git'],
+                'technologies' => ['CodeIgniter', 'HTML5', 'CSS3', 'JavaScript', 'jQuery', 'Navicat Premium', 'Git'],
             ],
         ];
 
         foreach ($roles as $position => $role) {
             Experience::query()->updateOrCreate(
                 ['company' => $role['company'], 'role' => $role['role']],
-                [...$role, 'position' => $position + 1],
+                [...$role, 'summary' => null, 'is_remote' => false, 'is_confidential' => false, 'position' => $position + 1],
             );
         }
 
+        // The résumé gives years only; they are stored as January and displayed as years.
         $education = [
-            ['institution' => 'AMA Computer Learning Center (ACLC)', 'qualification' => 'Bachelor of Science', 'field_of_study' => 'Information and Communication Systems', 'started_on' => '2018-06-01', 'ended_on' => '2022-06-01', 'notes' => 'Focused on web systems development and software engineering.'],
-            ['institution' => 'Asian Institute of Computer Studies (AICS)', 'qualification' => 'Senior High School', 'field_of_study' => 'Information and Communication Technology', 'started_on' => '2016-06-01', 'ended_on' => '2018-03-01', 'notes' => null],
+            ['institution' => 'AMA Computer Learning Center (ACLC)', 'qualification' => 'Bachelor of Science in Information and Communication Systems', 'started_on' => '2018-01-01', 'ended_on' => '2022-01-01'],
+            ['institution' => 'Asian Institute of Computer Studies (AICS)', 'qualification' => 'Information and Communication Technologies', 'started_on' => '2016-01-01', 'ended_on' => '2018-01-01'],
         ];
 
         foreach ($education as $position => $entry) {
-            Education::query()->updateOrCreate(['institution' => $entry['institution']], [...$entry, 'position' => $position + 1]);
+            Education::query()->updateOrCreate(
+                ['institution' => $entry['institution']],
+                [...$entry, 'field_of_study' => null, 'notes' => null, 'position' => $position + 1],
+            );
         }
 
         $certificates = [
-            ['name' => 'Learn ChatGPT for Government Workforce', 'issuer' => 'Government AI Workforce Training', 'issued_on' => '2025-06-01', 'credential_url' => null],
-            ['name' => 'Stay Safe Online: Cybersecurity Basics', 'issuer' => 'DICT', 'issued_on' => '2025-06-01', 'credential_url' => null],
-            ['name' => 'Digital Citizenship', 'issuer' => 'National ICT Training Center', 'issued_on' => '2025-06-01', 'credential_url' => null],
+            'Learn ChatGPT for Government Workforce',
+            'Stay Safe Online: Cybersecurity Basics',
+            'Digital Citizenship',
         ];
 
-        foreach ($certificates as $position => $certificate) {
-            Certificate::query()->updateOrCreate(['name' => $certificate['name']], [...$certificate, 'position' => $position + 1]);
+        foreach ($certificates as $position => $name) {
+            Certificate::query()->updateOrCreate(
+                ['name' => $name],
+                ['issuer' => null, 'issued_on' => '2025-06-01', 'credential_url' => null, 'position' => $position + 1],
+            );
         }
-    }
-
-    private function seedPosts(): void
-    {
-        $post = Post::query()->updateOrCreate(['slug' => 'shipping-production-systems-with-laravel-filament-and-claude-code'], [
-            'title' => 'Shipping six production systems with Laravel, Filament and Claude Code',
-            'excerpt' => 'How combining Laravel, Filament and an AI-assisted workflow lets one developer keep several government systems moving.',
-            'body' => <<<'MD'
-                ## The workflow
-
-                Daily use of **Claude Code** has changed how I approach software work. I hand off repetitive scaffolding and fiddly debugging, and spend my own attention on architecture, data modelling and the parts of the UI people actually touch.
-
-                ```bash
-                claude "scaffold a Filament resource for profiling records with agency-scoped access"
-                ```
-
-                ## What stays human
-
-                AI is fast at producing code, but it doesn't know your users. Reviewing every change, keeping tests close to the business rules and saying no to unnecessary features is still the job.
-
-                ## Takeaways
-
-                - Let the framework do the heavy lifting — Filament covers most internal tooling.
-                - Treat AI output like a pull request from a new teammate: read it.
-                - Keep the database honest; most performance wins live there.
-                MD,
-            'status' => PostStatus::Published,
-            'published_at' => now()->subWeeks(2),
-        ]);
-
-        $post->tags()->sync($this->tagIds(['Laravel', 'Filament', 'AI-assisted development']));
-    }
-
-    private function seedMessages(): void
-    {
-        if (ContactMessage::query()->exists()) {
-            return;
-        }
-
-        ContactMessage::query()->create([
-            'name' => 'Maria Santos',
-            'email' => 'maria.santos@example.com',
-            'subject' => 'Freelance Laravel project',
-            'message' => "Hi Cedric,\n\nWe're rebuilding our booking platform on Laravel and Inertia and would love to talk about a 3-month contract. Are you available for a call next week?\n\nThanks,\nMaria",
-            'created_at' => now()->subHours(5),
-        ]);
-
-        ContactMessage::query()->create([
-            'name' => 'Daniel Cruz',
-            'email' => 'daniel@example.com',
-            'subject' => null,
-            'message' => 'Really enjoyed your post about shipping with Filament. Do you have any tips for structuring multi-tenant admin panels?',
-            'read_at' => now()->subDay(),
-            'created_at' => now()->subDays(2),
-        ]);
     }
 
     /**
-     * @param  array<string, string>  $sections
+     * What the résumé shows you have done, phrased as services. Each description restates résumé lines only.
      */
-    private function markdownSections(array $sections): string
+    private function seedServices(): void
     {
-        return collect($sections)
-            ->map(fn (string $text, string $heading) => "## {$heading}\n\n{$text}")
-            ->implode("\n\n");
+        $services = [
+            [
+                'title' => 'Laravel web application development',
+                'icon' => 'server',
+                'description' => 'Building and maintaining web applications with Laravel, Filament and Vue.js, the stack behind national-scale government systems such as a multi-agency profiling platform, a learning management system and a document tracking system.',
+            ],
+            [
+                'title' => 'Front-end development',
+                'icon' => 'layout-dashboard',
+                'description' => 'Responsive user interfaces with React, TypeScript, Tailwind CSS and Inertia.js, integrated with Laravel back-end services.',
+            ],
+            [
+                'title' => 'APIs & MySQL databases',
+                'icon' => 'database',
+                'description' => 'API development, and MySQL database design and optimization, including database operations for scholarship management systems.',
+            ],
+            [
+                'title' => 'Deployment & version control',
+                'icon' => 'container',
+                'description' => 'Docker and AWS-based deployments, and Git workflows for team development.',
+            ],
+        ];
+
+        foreach ($services as $position => $service) {
+            Service::query()->updateOrCreate(['title' => $service['title']], [...$service, 'position' => $position + 1]);
+        }
+    }
+
+    /**
+     * The owner's résumé PDF, if it has been placed at storage/app/seed/resume.pdf. That folder is
+     * gitignored, so the file (which has a phone number and address) never ends up in the repository.
+     */
+    private function attachResume(): void
+    {
+        $source = storage_path('app/seed/resume.pdf');
+
+        if (! is_file($source)) {
+            return;
+        }
+
+        $disk = Storage::disk(StoreUploadedFileAction::disk());
+        $path = 'resume/cedric-james-leala-resume.pdf';
+        $disk->put($path, (string) file_get_contents($source));
+
+        Profile::query()->sole()->update(['resume_path' => $path, 'resume_updated_at' => now()]);
     }
 
     /**

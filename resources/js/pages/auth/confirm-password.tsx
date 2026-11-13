@@ -1,6 +1,7 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
+import InputError from '@/components/custom/input-error';
+import PasswordInput from '@/components/custom/password-input';
+import { RequiredMark } from '@/components/custom/required-mark';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -11,13 +12,17 @@ export default function ConfirmPassword() {
         <>
             <Head title="Confirm password" />
 
-            <Form {...store.form()} resetOnSuccess={['password']}>
+            <Form {...store.form()} resetOnSuccess={['password']} noValidate>
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                Password
+                                <RequiredMark />
+                            </Label>
                             <PasswordInput
                                 id="password"
+                                required
                                 name="password"
                                 placeholder="Password"
                                 autoComplete="current-password"

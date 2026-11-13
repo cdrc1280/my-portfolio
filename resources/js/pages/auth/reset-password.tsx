@@ -1,6 +1,7 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
+import InputError from '@/components/custom/input-error';
+import PasswordInput from '@/components/custom/password-input';
+import { RequiredMark } from '@/components/custom/required-mark';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,6 +20,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
             <Head title="Reset password" />
 
             <Form
+                noValidate
                 {...update.form()}
                 transform={(data) => ({ ...data, token, email })}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -40,9 +42,13 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">
+                                Password
+                                <RequiredMark />
+                            </Label>
                             <PasswordInput
                                 id="password"
+                                required
                                 name="password"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
@@ -54,9 +60,13 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
+                            <Label htmlFor="password_confirmation">
+                                Confirm password
+                                <RequiredMark />
+                            </Label>
                             <PasswordInput
                                 id="password_confirmation"
+                                required
                                 name="password_confirmation"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"

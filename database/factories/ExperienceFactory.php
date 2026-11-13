@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Domain\Experience\Enums\EmploymentType;
-use App\Domain\Experience\Models\Experience;
+use App\Domains\Experience\Enums\EmploymentType;
+use App\Domains\Experience\Models\Experience;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

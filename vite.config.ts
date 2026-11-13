@@ -13,8 +13,12 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
+                bunny('Geist', {
                     weights: [400, 500, 600],
+                }),
+                // Tags, section labels, dates, metadata, code and folder trees.
+                bunny('Geist Mono', {
+                    weights: [400, 500],
                 }),
             ],
         }),
@@ -28,6 +32,11 @@ export default defineConfig({
             formVariants: true,
         }),
     ]),
+    // The SSR bundle includes its dependencies, so production only needs Node + bootstrap/ssr
+    // (no node_modules in the Vercel image).
+    ssr: {
+        noExternal: true,
+    },
     server: {
         // Inside Docker the dev server listens on all interfaces, while the
         // browser on the host reaches it (and its HMR socket) via localhost.

@@ -2,19 +2,24 @@
 
 namespace App\Providers;
 
-use App\Domain\GitHub\Support\GitHubClient;
+use App\Domains\Bookings\Support\CalendlyClient;
+use App\Domains\GitHub\Support\GitHubClient;
 use App\Models\User;
+use App\Shared\Storage\DatabaseFilesystemAdapter;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use League\Flysystem\Filesystem;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(GitHubClient::class, fn (): GitHubClient => GitHubClient::fromConfig());
+        $this->app->bind(CalendlyClient::class, fn (): CalendlyClient => CalendlyClient::fromConfig());
     }
 
     /**
@@ -33,18 +39,20 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureAuthorization();
+        $this->configureDatabaseDisk();
         $this->configureRateLimiting();
     }
 
     /**
-     * Public contact form: a few messages per minute, a cap per day.
+     * Public contact form: a few messages per hour per IP.
      */
     protected function configureRateLimiting(): void
     {
-        RateLimiter::for('contact', fn (Request $request): array => [
-            Limit::perMinute((int) config('portfolio.contact.per_minute'))->by('contact:minute:'.$request->ip()),
-            Limit::perDay((int) config('portfolio.contact.per_day'))->by('contact:day:'.$request->ip()),
-        ]);
+        RateLimiter::for('contact', fn (Request $request): Limit => Limit::perHour((int) config('portfolio.contact.per_hour'))
+            ->by('contact:'.$request->ip()));
+
+        RateLimiter::for('assistant', fn (Request $request): Limit => Limit::perMinute(20)
+            ->by('assistant:'.$request->ip()));
     }
 
     /**
@@ -81,5 +89,21 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * The `database` filesystem driver: uploads kept in the stored_files table (used on Vercel,
+     * which has no persistent disk). See App\Shared\Storage\DatabaseFilesystemAdapter.
+     */
+    private function configureDatabaseDisk(): void
+    {
+        Storage::extend('database', function ($app, array $config): FilesystemAdapter {
+            $adapter = new DatabaseFilesystemAdapter(
+                DB::connection(is_string($config['connection'] ?? null) ? $config['connection'] : null),
+                (string) ($config['url'] ?? ''),
+            );
+
+            return new FilesystemAdapter(new Filesystem($adapter, $config), $adapter, $config);
+        });
     }
 }

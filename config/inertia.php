@@ -16,8 +16,10 @@ return [
     */
 
     'ssr' => [
-        'enabled' => true,
-        'url' => 'http://127.0.0.1:13714',
+        // Production runs the SSR server in its own container (docker-compose.prod.yml → `ssr`). If it is
+        // unreachable, Inertia falls back to client-side rendering, so the site never goes down with it.
+        'enabled' => (bool) env('INERTIA_SSR_ENABLED', true),
+        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13714'),
         // 'bundle' => base_path('bootstrap/ssr/ssr.mjs'),
 
     ],

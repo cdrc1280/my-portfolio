@@ -1,4 +1,6 @@
 import { createInertiaApp } from '@inertiajs/react';
+import { AppErrorBoundary } from '@/components/custom/app-error-boundary';
+import { HttpErrorFallback } from '@/components/custom/http-error-fallback';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
@@ -29,16 +31,17 @@ void createInertiaApp({
     withApp(app) {
         return (
             <TooltipProvider delayDuration={0}>
-                {app}
+                {/* A page that throws while rendering shows a recovery screen, never a blank page. */}
+                <AppErrorBoundary>{app}</AppErrorBoundary>
                 {/* Also renders Laravel flash toasts (Inertia::flash('toast', ...)). */}
                 <Toaster closeButton />
+                <HttpErrorFallback />
             </TooltipProvider>
         );
     },
-    progress: {
-        color: 'var(--brand)',
-        delay: 250,
-    },
+    // No progress bar: page changes show layout-specific skeletons (usePageTransition) and form
+    // buttons show their own spinners.
+    progress: false,
 });
 
 // This will set light / dark mode on load...

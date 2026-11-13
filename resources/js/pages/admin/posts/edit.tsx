@@ -1,13 +1,13 @@
 import { Head, Link, setLayoutProps } from '@inertiajs/react';
 import { ExternalLink } from 'lucide-react';
-import { PageHeader } from '@/components/shared/page-header';
+import { PageHeader } from '@/components/custom/page-header';
 import { Button } from '@/components/ui/button';
-import { PostForm } from '@/features/blog/components/post-form';
-import { PostStatusBadge } from '@/features/blog/components/post-status-badge';
-import type { AdminPost, PostStatus } from '@/features/blog/types';
 import { edit, index } from '@/routes/admin/posts';
 import { show } from '@/routes/blog';
 import type { SelectOption, Tag } from '@/types';
+import type { AdminPost, PostStatus } from '@/types/domains/blog';
+import { PostForm } from './post-form';
+import { PostStatusBadge } from './post-status-badge';
 
 type Props = {
     post: AdminPost;

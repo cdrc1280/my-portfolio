@@ -1,11 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
 import { FolderKanban, Plus } from 'lucide-react';
-import { EmptyState } from '@/components/shared/empty-state';
-import { PageHeader } from '@/components/shared/page-header';
+import { EmptyState } from '@/components/custom/empty-state';
+import { PageHeader } from '@/components/custom/page-header';
 import { Button } from '@/components/ui/button';
-import { AdminProjectList } from '@/features/projects/components/admin-project-list';
-import type { AdminProject } from '@/features/projects/types';
 import { create, index } from '@/routes/admin/projects';
+import type { AdminProject } from '@/types/domains/projects';
+import { AdminProjectList } from './admin-project-list';
 
 type Props = {
     projects: AdminProject[];

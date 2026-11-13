@@ -44,6 +44,16 @@ return [
             'report' => false,
         ],
 
+        // Uploads kept in the database (stored_files), for hosts without a persistent disk (Vercel).
+        // Select it with MEDIA_DISK=database; files are served by MediaController at /media/<path>.
+        'database' => [
+            'driver' => 'database',
+            'connection' => env('DB_CONNECTION'),
+            'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/media',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

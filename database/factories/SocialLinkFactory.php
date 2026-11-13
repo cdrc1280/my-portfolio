@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Domain\Profile\Enums\SocialPlatform;
-use App\Domain\Profile\Models\SocialLink;
+use App\Domains\Profile\Enums\SocialPlatform;
+use App\Domains\Profile\Models\SocialLink;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

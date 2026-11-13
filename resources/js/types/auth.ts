@@ -1,4 +1,4 @@
-/** Mirrors App\Http\Resources\UserResource. */
+/** Mirrors App\Domains\Account\Resources\UserResource. */
 export type User = {
     id: number;
     name: string;

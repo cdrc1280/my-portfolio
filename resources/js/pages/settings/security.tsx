@@ -1,11 +1,12 @@
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
-import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
-import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
-import type { Props as ManageTwoFactorProps } from '@/components/manage-two-factor';
-import ManageTwoFactor from '@/components/manage-two-factor';
-import PasswordInput from '@/components/password-input';
+import SecurityController from '@/actions/App/Domains/Account/Controllers/Settings/SecurityController';
+import Heading from '@/components/custom/heading';
+import InputError from '@/components/custom/input-error';
+import type { Props as ManageTwoFactorProps } from '@/components/custom/manage-two-factor';
+import ManageTwoFactor from '@/components/custom/manage-two-factor';
+import PasswordInput from '@/components/custom/password-input';
+import { RequiredMark } from '@/components/custom/required-mark';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/security';
@@ -33,6 +34,7 @@ export default function Security(props: Props) {
                 />
 
                 <Form
+                    noValidate
                     {...SecurityController.update.form()}
                     options={{
                         preserveScroll: true,
@@ -53,10 +55,14 @@ export default function Security(props: Props) {
                     {({ errors, processing }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="current_password">Current password</Label>
+                                <Label htmlFor="current_password">
+                                    Current password
+                                    <RequiredMark />
+                                </Label>
 
                                 <PasswordInput
                                     id="current_password"
+                                    required
                                     ref={currentPasswordInput}
                                     name="current_password"
                                     className="mt-1 block w-full"
@@ -68,10 +74,14 @@ export default function Security(props: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">New password</Label>
+                                <Label htmlFor="password">
+                                    New password
+                                    <RequiredMark />
+                                </Label>
 
                                 <PasswordInput
                                     id="password"
+                                    required
                                     ref={passwordInput}
                                     name="password"
                                     className="mt-1 block w-full"
@@ -84,10 +94,14 @@ export default function Security(props: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
+                                <Label htmlFor="password_confirmation">
+                                    Confirm password
+                                    <RequiredMark />
+                                </Label>
 
                                 <PasswordInput
                                     id="password_confirmation"
+                                    required
                                     name="password_confirmation"
                                     className="mt-1 block w-full"
                                     autoComplete="new-password"
