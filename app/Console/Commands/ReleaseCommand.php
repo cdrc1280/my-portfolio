@@ -7,12 +7,17 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 /**
  * Brings the database up to date for a new release, safely from many instances at once:
  * migrates under a database-level lock, then seeds the admin account and real content only if
  * the site has never been set up. Vercel runs it when a container starts (docker/vercel/start.sh),
  * so a deploy needs no manual database step.
+ *
+ * If migrating fails before the site was ever set up (no users yet), the database can only hold a
+ * half-finished first setup, for example from an instance stopped mid-migration. It is wiped and
+ * built again. Once a user exists, a failure is reported and nothing is ever wiped.
  */
 class ReleaseCommand extends Command
 {
@@ -33,9 +38,22 @@ class ReleaseCommand extends Command
         }
 
         try {
-            $this->call('migrate', ['--force' => true]);
+            if (! $this->migrate()) {
+                if ($this->siteIsSetUp()) {
+                    $this->error('Migrating failed on a site that is already set up; nothing was changed.');
 
-            if (! User::query()->exists()) {
+                    return self::FAILURE;
+                }
+
+                $this->warn('Migrating failed before the site was ever set up: rebuilding the database.');
+                $this->call('db:wipe', ['--force' => true]);
+
+                if (! $this->migrate()) {
+                    return self::FAILURE;
+                }
+            }
+
+            if (! $this->siteIsSetUp()) {
                 $this->info('First release: seeding the admin account and portfolio content.');
                 $this->call('db:seed', ['--force' => true]);
             }
@@ -46,5 +64,25 @@ class ReleaseCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    private function migrate(): bool
+    {
+        try {
+            return $this->call('migrate', ['--force' => true]) === self::SUCCESS;
+        } catch (Throwable $e) {
+            $this->error($e->getMessage());
+
+            return false;
+        }
+    }
+
+    private function siteIsSetUp(): bool
+    {
+        try {
+            return User::query()->exists();
+        } catch (Throwable) {
+            return false; // No users table yet.
+        }
     }
 }

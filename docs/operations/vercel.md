@@ -11,7 +11,9 @@ visitor → Vercel (HTTPS, CDN) → container: FrankenPHP (Laravel) + Node SSR s
 - **No terminal needed.** Each new container starts the web server first (Vercel stops an instance that isn't serving
   within about 28 seconds), then runs `php artisan app:release` in the background over Neon's direct connection. It
   migrates under a database lock, so it is safe when several instances start at once, and on the very first release it
-  creates your admin account and the real portfolio content. The very first visit may therefore show an error page for
+  creates your admin account and the real portfolio content. If migrating fails before the site was ever set up (no
+  user exists yet, e.g. an instance was stopped mid-migration), it wipes that half-built database and starts again;
+  once a user exists it never wipes anything. The very first visit may therefore show an error page for
   a few seconds while the database is being set up.
 - **Region:** `vercel.json` pins the site to Singapore (`sin1`), next to the database. If you create Neon in another
   region, change `regions` to the matching Vercel region, or every query crosses an ocean.
