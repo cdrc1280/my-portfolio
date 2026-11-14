@@ -6,6 +6,7 @@ namespace App\Domains\Contact\Queries;
 
 use App\Domains\Contact\Models\ContactMessage;
 use App\Domains\Contact\Resources\ContactMessageResource;
+use App\Domains\Contact\Resources\ContactNotificationResource;
 use App\Shared\Support\Paginated;
 
 /**
@@ -33,5 +34,23 @@ final class ContactMessageQueries
     public function unreadCount(): int
     {
         return ContactMessage::query()->unread()->count();
+    }
+
+    /**
+     * The admin notification bell: how many briefs are unread and the newest few of them.
+     *
+     * @return array{unread_count: int, items: list<ContactNotificationResource>}
+     */
+    public function notifications(int $limit = 6): array
+    {
+        $items = ContactMessage::query()
+            ->unread()
+            ->latest()
+            ->limit($limit)
+            ->get()
+            ->map(fn (ContactMessage $message): ContactNotificationResource => ContactNotificationResource::fromModel($message))
+            ->all();
+
+        return ['unread_count' => $this->unreadCount(), 'items' => array_values($items)];
     }
 }

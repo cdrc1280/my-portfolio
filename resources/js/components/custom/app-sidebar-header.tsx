@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/custom/breadcrumbs';
+import { NotificationBell } from '@/components/custom/notification-bell';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
@@ -9,6 +10,9 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 {/* On desktop the toggle lives in the sidebar header; on mobile the sidebar is off-canvas, so open it from here. */}
                 <SidebarTrigger className="-ml-1 md:hidden" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
+            </div>
+            <div className="ml-auto">
+                <NotificationBell />
             </div>
         </header>
     );

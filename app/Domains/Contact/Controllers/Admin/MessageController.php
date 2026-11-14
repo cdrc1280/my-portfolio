@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Contact\Controllers\Admin;
 
 use App\Domains\Contact\Actions\DeleteContactMessageAction;
+use App\Domains\Contact\Actions\MarkAllContactMessagesAsReadAction;
 use App\Domains\Contact\Actions\MarkContactMessageAsReadAction;
 use App\Domains\Contact\Actions\MarkContactMessageAsUnreadAction;
 use App\Domains\Contact\Models\ContactMessage;
@@ -26,6 +27,7 @@ class MessageController extends Controller implements HasMiddleware
             new Middleware('can:viewAny,'.ContactMessage::class, only: ['index']),
             new Middleware('can:view,message', only: ['show']),
             new Middleware('can:update,message', only: ['unread']),
+            new Middleware('can:update,'.ContactMessage::class, only: ['readAll']),
             new Middleware('can:delete,message', only: ['destroy']),
         ];
     }
@@ -58,6 +60,18 @@ class MessageController extends Controller implements HasMiddleware
         $this->toast('Marked as unread.');
 
         return to_route('admin.messages.index');
+    }
+
+    /**
+     * "Mark all as read" in the notification bell; stays on the page it was used from.
+     */
+    public function readAll(MarkAllContactMessagesAsReadAction $action): RedirectResponse
+    {
+        $action->execute();
+
+        $this->toast('All messages marked as read.');
+
+        return back();
     }
 
     public function destroy(ContactMessage $message, DeleteContactMessageAction $action): RedirectResponse

@@ -3,7 +3,7 @@
 The public project-brief form and the admin inbox.
 
 - **Public:** `GET /contact`, `POST /contact` (`throttle:contact`)
-- **Admin:** `/admin/messages` (`?filter=unread`, paginated), `/admin/messages/{id}`, `PATCH /admin/messages/{id}/unread`, `DELETE /admin/messages/{id}`
+- **Admin:** `/admin/messages` (`?filter=unread`, paginated), `/admin/messages/{id}`, `PATCH /admin/messages/{id}/unread`, `PATCH /admin/messages/read-all`, `DELETE /admin/messages/{id}`
 
 ## Form fields
 
@@ -34,6 +34,7 @@ The public project-brief form and the admin inbox.
 - **Privacy:** the IP is stored only as an HMAC (`ip_hash`, keyed by `APP_KEY`).
 - **On submit,** `ContactMessageSubmitted` fires two queued listeners: `SendContactMessageNotification` (to `portfolio.contact.notify_email`) and `SendContactAutoReply` (confirmation to the sender, including the response time). The event fires after the brief is committed. On a queue worker a mail failure is retried (3 tries); on the `sync` queue (Vercel, where mail is sent during the request) it is logged instead, so the visitor still gets the success toast and the brief stays in the inbox.
 - **Read state:** opening a message marks it read. "Mark unread" reverses that.
+- **Notification bell:** the admin header (top right) has a bell with an unread count badge (9+ above nine). `HandleInertiaRequests` shares `notifications` (`ContactMessageQueries::notifications()`: unread count plus the newest 6 unread briefs as `ContactNotificationResource`, with "2 hours ago" built server-side) to users who may view the inbox, and `null` to everyone else. Desktop opens a dropdown; mobile opens a bottom drawer. Each row opens the message (which marks it read); "Mark all as read" (`MarkAllContactMessagesAsReadAction`) returns to the current page with a toast; "Open inbox" links to the list.
 - **Message page:** the body is on the left; sender and project brief are in the side rail.
 
 ## Admin side rail (inbox)
@@ -43,8 +44,8 @@ Unread and total counts, a project-type breakdown for the current page, how many
 ## Code
 
 - Controllers: `app/Domains/Contact/Controllers/Admin/MessageController.php`, `app/Domains/Contact/Controllers/Public/ContactController.php` · routes: `routes/contact.php`
-- Domain: `app/Domains/Contact`: `Data/ContactMessageData` (honeypot via `isSpam()`), `Actions/SubmitContactMessageAction` (hashes the IP passed by the controller), mark read/unread and delete actions, `Queries/ContactMessageQueries`, `Resources/ContactMessageResource`, events, listeners, notifications, enums (`BudgetRange`, `Currency`, …), `ContactMessageQueryBuilder`
-- Frontend: `components/custom/contact/*`, `pages/admin/messages/*` (page + its private components), `types/domains/contact.ts`
+- Domain: `app/Domains/Contact`: `Data/ContactMessageData` (honeypot via `isSpam()`), `Actions/SubmitContactMessageAction` (hashes the IP passed by the controller), mark read/unread, mark-all-read and delete actions, `Queries/ContactMessageQueries`, `Resources/ContactMessageResource`, `Resources/ContactNotificationResource`, events, listeners, notifications, enums (`BudgetRange`, `Currency`, …), `ContactMessageQueryBuilder`
+- Frontend: `components/custom/contact/*`, `components/custom/notification-bell.tsx` (in `app-sidebar-header.tsx`; uses `components/ui/drawer`), `pages/admin/messages/*` (page + its private components), `types/domains/contact.ts`
 
 ## Tests
 

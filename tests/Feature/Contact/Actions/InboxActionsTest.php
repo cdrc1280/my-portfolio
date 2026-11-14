@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\Contact\Actions\DeleteContactMessageAction;
+use App\Domains\Contact\Actions\MarkAllContactMessagesAsReadAction;
 use App\Domains\Contact\Actions\MarkContactMessageAsReadAction;
 use App\Domains\Contact\Actions\MarkContactMessageAsUnreadAction;
 use App\Domains\Contact\Models\ContactMessage;
@@ -32,4 +33,16 @@ test('deletes a message', function () {
     app(DeleteContactMessageAction::class)->execute($message);
 
     $this->assertModelMissing($message);
+});
+
+test('marks every unread message read and leaves earlier read times alone', function () {
+    $read = ContactMessage::factory()->read()->create();
+    $readAt = $read->read_at;
+    ContactMessage::factory()->count(2)->create();
+
+    $changed = app(MarkAllContactMessagesAsReadAction::class)->execute();
+
+    expect($changed)->toBe(2)
+        ->and(ContactMessage::query()->unread()->count())->toBe(0)
+        ->and($read->fresh()->read_at->equalTo($readAt))->toBeTrue();
 });

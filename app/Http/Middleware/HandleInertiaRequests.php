@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Domains\Account\Resources\UserResource;
+use App\Domains\Contact\Models\ContactMessage;
+use App\Domains\Contact\Queries\ContactMessageQueries;
 use App\Domains\Profile\Actions\GetProfileAction;
 use App\Domains\Services\Models\Service;
 use App\Domains\Uses\Models\UsesItem;
@@ -52,6 +54,10 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => fn () => $request->user() ? UserResource::fromModel($request->user())->toArray() : null,
             ],
+            // The admin notification bell (unread briefs); null for everyone else.
+            'notifications' => fn () => $request->user()?->can('viewAny', ContactMessage::class)
+                ? app(ContactMessageQueries::class)->notifications()
+                : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

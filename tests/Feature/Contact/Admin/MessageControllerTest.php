@@ -59,3 +59,49 @@ test('a message can be marked unread and deleted', function () {
     $this->delete(route('admin.messages.destroy', $message))->assertRedirect(route('admin.messages.index'));
     $this->assertModelMissing($message);
 });
+
+test('the admin gets the unread briefs for the notification bell on every page', function () {
+    ContactMessage::factory()->read()->create();
+    $old = ContactMessage::factory()->create(['created_at' => now()->subHours(2)]);
+    $new = ContactMessage::factory()->create(['name' => 'Ada Lovelace']);
+    $this->actingAs(admin());
+
+    $this->get(route('admin.dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('notifications.unread_count', 2)
+            ->has('notifications.items', 2)
+            ->where('notifications.items.0.id', $new->id)
+            ->where('notifications.items.0.name', 'Ada Lovelace')
+            ->where('notifications.items.1.id', $old->id)
+            ->where('notifications.items.1.received_ago', '2 hours ago'));
+});
+
+test('visitors and non-admins get no notifications', function () {
+    ContactMessage::factory()->create();
+
+    $this->get(route('home'))->assertInertia(fn (Assert $page) => $page->where('notifications', null));
+
+    $this->actingAs(nonAdmin());
+    $this->get(route('home'))->assertInertia(fn (Assert $page) => $page->where('notifications', null));
+});
+
+test('mark all as read clears every unread brief and returns to the page', function () {
+    ContactMessage::factory()->count(3)->create();
+    $this->actingAs(admin());
+
+    $this->from(route('admin.dashboard'))
+        ->patch(route('admin.messages.read-all'))
+        ->assertRedirect(route('admin.dashboard'))
+        ->assertInertiaFlash('toast.type', 'success');
+
+    expect(ContactMessage::query()->unread()->count())->toBe(0);
+});
+
+test('non-admins cannot mark all as read', function () {
+    ContactMessage::factory()->create();
+    $this->actingAs(nonAdmin());
+
+    $this->patch(route('admin.messages.read-all'))->assertForbidden();
+
+    expect(ContactMessage::query()->unread()->count())->toBe(1);
+});

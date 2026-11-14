@@ -14,3 +14,19 @@ export type ContactMessage = {
 };
 
 export type InboxFilter = 'all' | 'unread';
+
+/** App\Domains\Contact\Resources\ContactNotificationResource: an unread brief in the admin bell. */
+export type ContactNotification = {
+    id: number;
+    name: string;
+    project_type: string | null;
+    excerpt: string;
+    created_at: string | null;
+    received_ago: string | null;
+};
+
+/** Shared `notifications` prop (ContactMessageQueries::notifications()); null unless the user is the admin. */
+export type ContactNotifications = {
+    unread_count: number;
+    items: ContactNotification[];
+};
