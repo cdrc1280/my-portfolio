@@ -94,7 +94,7 @@ class PortfolioSeeder extends Seeder
     {
         $groups = [
             TagCategory::Backend->value => ['PHP', 'Laravel', 'Filament', 'CodeIgniter', 'REST APIs'],
-            TagCategory::Database->value => ['MySQL'],
+            TagCategory::Database->value => ['MySQL', 'PostgreSQL'],
             TagCategory::Frontend->value => ['JavaScript', 'TypeScript', 'React', 'Vue.js', 'Inertia.js', 'HTML5', 'CSS3', 'SCSS', 'Tailwind CSS', 'Bootstrap', 'jQuery'],
             TagCategory::DevopsTools->value => ['Git', 'Docker', 'AWS', 'Linux', 'Navicat Premium'],
             TagCategory::AiTools->value => ['Claude', 'Claude Code', 'ChatGPT', 'Gemini', 'GitHub Copilot', 'Antigravity'],
