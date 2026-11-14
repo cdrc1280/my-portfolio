@@ -14,6 +14,8 @@ enum ProjectTimeline: string
     case WithinMonth = 'within_month';
     case OneToThreeMonths = 'one_to_three_months';
     case Flexible = 'flexible';
+    /** The sender describes it in their own words (ContactMessage::timeline_other). */
+    case Other = 'other';
 
     public function label(): string
     {
@@ -22,6 +24,7 @@ enum ProjectTimeline: string
             self::WithinMonth => 'Within a month',
             self::OneToThreeMonths => 'In 1–3 months',
             self::Flexible => 'Flexible',
+            self::Other => 'Something else',
         };
     }
 }

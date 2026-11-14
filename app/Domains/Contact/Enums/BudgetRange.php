@@ -20,6 +20,8 @@ enum BudgetRange: string
     case From3kTo8k = '3k_8k';
     case Over8k = '8k_plus';
     case NotSure = 'not_sure';
+    /** The sender states an amount in their own words (ContactMessage::budget_other). */
+    case Other = 'other';
 
     /**
      * Label in USD, used where briefs in different currencies are compared (the dashboard mix).
@@ -39,6 +41,7 @@ enum BudgetRange: string
             self::From3kTo8k => $currency->format($medium).' – '.$currency->format($large),
             self::Over8k => $currency->format($large).'+',
             self::NotSure => 'Not sure yet',
+            self::Other => 'Another amount',
         };
     }
 

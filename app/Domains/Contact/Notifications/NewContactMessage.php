@@ -30,7 +30,7 @@ final class NewContactMessage extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $type = $this->message->project_type?->label() ?? 'General enquiry';
+        $type = $this->message->projectTypeLabel() ?? 'General enquiry';
 
         return (new MailMessage)
             ->subject("New brief from {$this->message->name}: {$type}")
@@ -39,7 +39,7 @@ final class NewContactMessage extends Notification
             ->line("**From:** {$this->message->name} <{$this->message->email}>")
             ->line("**Project type:** {$type}")
             ->line('**Budget:** '.($this->message->budgetLabel() ?? 'Not given'))
-            ->line('**Timeline:** '.($this->message->timeline?->label() ?? 'Not given'))
+            ->line('**Timeline:** '.($this->message->timelineLabel() ?? 'Not given'))
             ->line('**Message:**')
             ->line($this->message->message)
             ->action('Open in inbox', route('admin.messages.show', $this->message));

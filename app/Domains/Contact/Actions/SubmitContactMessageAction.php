@@ -21,9 +21,12 @@ final class SubmitContactMessageAction
                 'name' => $data->name,
                 'email' => $data->email,
                 'project_type' => $data->projectType,
+                'project_type_other' => $data->projectTypeOther,
                 'budget' => $data->budget,
                 'budget_currency' => $data->budgetCurrency,
+                'budget_other' => $data->budgetOther,
                 'timeline' => $data->timeline,
+                'timeline_other' => $data->timelineOther,
                 'message' => $data->message,
                 'ip_hash' => self::hashIp($ipAddress),
             ]);

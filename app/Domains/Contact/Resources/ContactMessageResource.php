@@ -11,7 +11,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Resource;
 
 /**
- * A brief in the admin inbox. Enum fields arrive as labels; the budget is in the sender's currency.
+ * A brief in the admin inbox. Enum fields arrive as labels (or the sender's own words for "other"); the budget is in
+ * the sender's currency.
  */
 #[MapName(SnakeCaseMapper::class)]
 final class ContactMessageResource extends Resource
@@ -36,9 +37,9 @@ final class ContactMessageResource extends Resource
             id: $message->id,
             name: $message->name,
             email: $message->email,
-            projectType: $message->project_type?->label(),
+            projectType: $message->projectTypeLabel(),
             budget: $message->budgetLabel(),
-            timeline: $message->timeline?->label(),
+            timeline: $message->timelineLabel(),
             excerpt: Str::limit(Str::squish($message->message), 120),
             message: $message->message,
             isRead: $message->isRead(),

@@ -28,9 +28,10 @@ test('the contact page renders with the brief options', function () {
             ->component('public/contact')
             ->has('projectTypes', 6)
             ->has('currencies', 7)
-            ->has('budgets.USD', 5)
-            ->has('budgets.PHP', 5)
-            ->has('timelines', 4)
+            ->has('budgets.USD', 6)
+            ->has('budgets.PHP', 6)
+            ->has('timelines', 5)
+            ->where('otherValue', 'other')
             ->where('budgets.USD.0', ['value' => 'under_1k', 'label' => 'Under $1,000'])
             ->where('budgets.PHP.1', ['value' => '1k_3k', 'label' => '₱50,000 – ₱150,000']));
 });
@@ -84,4 +85,37 @@ test('submissions are limited to three per hour per ip', function () {
     $this->travel(61)->minutes();
     $this->post(route('contact.store'), contactPayload())->assertRedirect();
     $this->assertDatabaseCount('contact_messages', 4);
+});
+
+test('picking "other" stores the sender\'s own words', function () {
+    $this->post(route('contact.store'), contactPayload([
+        'project_type' => 'other',
+        'project_type_other' => '  Mobile app  ',
+        'budget' => 'other',
+        'budget_other' => '₱20,000 a month',
+        'timeline' => 'other',
+        'timeline_other' => 'Before March',
+    ]))->assertRedirect(route('contact.show'));
+
+    $message = ContactMessage::query()->sole();
+    expect($message->project_type_other)->toBe('Mobile app')
+        ->and($message->projectTypeLabel())->toBe('Mobile app')
+        ->and($message->budgetLabel())->toBe('₱20,000 a month')
+        ->and($message->timelineLabel())->toBe('Before March');
+});
+
+test('"other" needs the sender\'s own words', function (string $field) {
+    $this->post(route('contact.store'), contactPayload([$field => 'other', "{$field}_other" => '  ']))
+        ->assertSessionHasErrors("{$field}_other");
+
+    $this->assertDatabaseCount('contact_messages', 0);
+})->with(['project_type', 'budget', 'timeline']);
+
+test('own words are dropped when a listed option is picked', function () {
+    $this->post(route('contact.store'), contactPayload(['project_type_other' => 'Leftover text']))
+        ->assertRedirect(route('contact.show'));
+
+    expect(ContactMessage::query()->sole())
+        ->project_type_other->toBeNull()
+        ->projectTypeLabel()->toBe('New web application');
 });

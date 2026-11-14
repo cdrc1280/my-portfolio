@@ -25,9 +25,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $email
  * @property ProjectType|null $project_type
+ * @property string|null $project_type_other
  * @property BudgetRange|null $budget
  * @property Currency|null $budget_currency
+ * @property string|null $budget_other
  * @property ProjectTimeline|null $timeline
+ * @property string|null $timeline_other
  * @property string $message
  * @property string|null $ip_hash
  * @property CarbonImmutable|null $read_at
@@ -36,7 +39,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @method static ContactMessageQueryBuilder<static> query()
  */
-#[Fillable(['name', 'email', 'project_type', 'budget', 'budget_currency', 'timeline', 'message', 'ip_hash', 'read_at'])]
+#[Fillable([
+    'name', 'email', 'project_type', 'project_type_other', 'budget', 'budget_currency', 'budget_other',
+    'timeline', 'timeline_other', 'message', 'ip_hash', 'read_at',
+])]
 #[UseEloquentBuilder(ContactMessageQueryBuilder::class)]
 #[UseFactory(ContactMessageFactory::class)]
 #[UsePolicy(ContactMessagePolicy::class)]
@@ -67,10 +73,35 @@ class ContactMessage extends Model
     }
 
     /**
-     * The budget as the client stated it, in their currency (briefs without one were in USD).
+     * The project type, or the sender's own words when they picked "Something else".
+     */
+    public function projectTypeLabel(): ?string
+    {
+        return $this->project_type === ProjectType::Other && filled($this->project_type_other)
+            ? $this->project_type_other
+            : $this->project_type?->label();
+    }
+
+    /**
+     * The budget as the client stated it, in their currency (briefs without one were in USD), or the
+     * amount in their own words when they picked "Another amount".
      */
     public function budgetLabel(): ?string
     {
+        if ($this->budget === BudgetRange::Other && filled($this->budget_other)) {
+            return $this->budget_other;
+        }
+
         return $this->budget?->labelIn($this->budget_currency ?? Currency::Usd);
+    }
+
+    /**
+     * The timeline, or the sender's own words when they picked "Something else".
+     */
+    public function timelineLabel(): ?string
+    {
+        return $this->timeline === ProjectTimeline::Other && filled($this->timeline_other)
+            ? $this->timeline_other
+            : $this->timeline?->label();
     }
 }

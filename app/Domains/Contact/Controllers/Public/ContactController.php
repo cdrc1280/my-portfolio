@@ -29,6 +29,8 @@ class ContactController extends Controller
                 ->mapWithKeys(fn (Currency $currency): array => [$currency->value => BudgetRange::optionsIn($currency)])
                 ->all(),
             'timelines' => ProjectTimeline::options(),
+            // Picking this value in any of the three dropdowns asks for the sender's own words.
+            'otherValue' => ProjectType::Other->value,
         ]);
     }
 

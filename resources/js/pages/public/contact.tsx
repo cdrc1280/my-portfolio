@@ -19,9 +19,10 @@ type Props = {
     currencies: SelectOption[];
     budgets: Record<string, SelectOption[]>;
     timelines: SelectOption[];
+    otherValue: string;
 };
 
-export default function Contact({ projectTypes, currencies, budgets, timelines }: Props) {
+export default function Contact({ projectTypes, currencies, budgets, timelines, otherValue }: Props) {
     const { site } = usePage().props;
 
     return (
@@ -41,7 +42,13 @@ export default function Contact({ projectTypes, currencies, budgets, timelines }
             <div className={cn(containers.page, 'grid gap-10 pb-24 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16')}>
                 <Reveal>
                     <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-8">
-                        <ContactForm projectTypes={projectTypes} currencies={currencies} budgets={budgets} timelines={timelines} />
+                        <ContactForm
+                            projectTypes={projectTypes}
+                            currencies={currencies}
+                            budgets={budgets}
+                            timelines={timelines}
+                            otherValue={otherValue}
+                        />
                     </div>
                 </Reveal>
 

@@ -12,15 +12,19 @@ The public project-brief form and the admin inbox.
 | `name` | required, ≤100 |
 | `email` | required, RFC email, ≤150 |
 | `project_type` | `new_build` \| `feature_work` \| `maintenance` \| `legacy_upgrade` \| `consulting` \| `other` |
+| `project_type_other` | the sender's own words, max 150; required when `project_type` is `other`, otherwise dropped |
 | `budget_currency` | `PHP` \| `USD` \| `EUR` \| `GBP` \| `AUD` \| `CAD` \| `SGD` (required) |
-| `budget` | bracket: `under_1k` \| `1k_3k` \| `3k_8k` \| `8k_plus` \| `not_sure` (names kept from the USD-only days) |
-| `timeline` | `asap` \| `within_month` \| `one_to_three_months` \| `flexible` |
+| `budget` | bracket: `under_1k` \| `1k_3k` \| `3k_8k` \| `8k_plus` \| `not_sure` \| `other` (names kept from the USD-only days) |
+| `budget_other` | the sender's own amount, max 150; required when `budget` is `other`, otherwise dropped |
+| `timeline` | `asap` \| `within_month` \| `one_to_three_months` \| `flexible` \| `other` |
+| `timeline_other` | the sender's own words, max 150; required when `timeline` is `other`, otherwise dropped |
 | `message` | required, 20–5000 |
 | honeypot | must be empty |
 
 ## Behavior
 
 - **Budgets in the client's currency:** a bracket is stored with its currency. `Currency::thresholds()` gives each currency rounded, roughly equivalent brackets: ₱50k / ₱150k / ₱450k, $1k / $3k / $8k, and so on. `BudgetRange::labelIn()` labels it, and `ContactMessage::budgetLabel()` is what the inbox and owner email show. The form preselects PHP for visitors on Philippine time and USD otherwise. Briefs from before currencies were added count as USD.
+- **"Other" answers:** project type, budget and timeline each have an `other` option ("Something else" / "Another amount"). The controller passes that value as `otherValue`; picking it shows a text box under that dropdown, and the text is saved in the matching `*_other` column. `ContactMessage::projectTypeLabel()`, `budgetLabel()` and `timelineLabel()` return the sender's words in that case, and the inbox and owner email use them. Currency has no "other": it sets the bracket amounts.
 - **Dashboard mix:** budget brackets are compared across currencies and labelled in USD ("USD equivalent").
 - **Analytics:** a successful send fires the `Contact brief sent` event (see [integrations.md](integrations.md)).
 

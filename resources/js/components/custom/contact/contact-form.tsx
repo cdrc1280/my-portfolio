@@ -16,9 +16,12 @@ type ContactFormData = {
     name: string;
     email: string;
     project_type: string;
+    project_type_other: string;
     budget: string;
     budget_currency: string;
+    budget_other: string;
     timeline: string;
+    timeline_other: string;
     message: string;
     /** Honeypot. */
     website: string;
@@ -30,6 +33,8 @@ type ContactFormProps = {
     /** Budget brackets per currency code, labelled in that currency. */
     budgets: Record<string, SelectOption[]>;
     timelines: SelectOption[];
+    /** The option value that asks for the sender's own words instead (project type, budget, timeline). */
+    otherValue: string;
 };
 
 /** Peso for visitors on Philippine time, US dollar otherwise; they can switch either way. */
@@ -44,17 +49,21 @@ function defaultCurrency(): string {
 /**
  * Project brief form. Options come from the backend enums (ProjectType, BudgetRange, Currency, ProjectTimeline).
  * The budget brackets are labelled in the chosen currency; the bracket is kept when the currency changes.
+ * Picking the "other" option of a dropdown shows a text box under it for the sender's own words.
  * Validation errors show inline under each field; success arrives as a Sonner toast flashed by
  * ContactController, and the sender also gets an auto-reply email.
  */
-export function ContactForm({ projectTypes, currencies, budgets, timelines }: ContactFormProps) {
+export function ContactForm({ projectTypes, currencies, budgets, timelines, otherValue }: ContactFormProps) {
     const form = useForm<ContactFormData>({
         name: '',
         email: '',
         project_type: '',
+        project_type_other: '',
         budget: '',
         budget_currency: defaultCurrency(),
+        budget_other: '',
         timeline: '',
+        timeline_other: '',
         message: '',
         website: '',
     });
@@ -112,6 +121,13 @@ export function ContactForm({ projectTypes, currencies, budgets, timelines }: Co
                     value={data.project_type}
                     error={errors.project_type}
                     onChange={(value) => setData('project_type', value)}
+                    other={{
+                        value: otherValue,
+                        text: data.project_type_other,
+                        placeholder: 'e.g. Mobile app, browser extension',
+                        error: errors.project_type_other,
+                        onChange: (text) => setData('project_type_other', text),
+                    }}
                 />
                 <ChoiceField
                     required
@@ -122,6 +138,13 @@ export function ContactForm({ projectTypes, currencies, budgets, timelines }: Co
                     value={data.timeline}
                     error={errors.timeline}
                     onChange={(value) => setData('timeline', value)}
+                    other={{
+                        value: otherValue,
+                        text: data.timeline_other,
+                        placeholder: 'e.g. Before March, in phases',
+                        error: errors.timeline_other,
+                        onChange: (text) => setData('timeline_other', text),
+                    }}
                 />
             </div>
 
@@ -145,6 +168,13 @@ export function ContactForm({ projectTypes, currencies, budgets, timelines }: Co
                     value={data.budget}
                     error={errors.budget}
                     onChange={(value) => setData('budget', value)}
+                    other={{
+                        value: otherValue,
+                        text: data.budget_other,
+                        placeholder: 'e.g. 20,000 per month',
+                        error: errors.budget_other,
+                        onChange: (text) => setData('budget_other', text),
+                    }}
                 />
             </div>
 
@@ -189,6 +219,15 @@ export function ContactForm({ projectTypes, currencies, budgets, timelines }: Co
     );
 }
 
+type OtherAnswer = {
+    /** The option value that shows the text box. */
+    value: string;
+    text: string;
+    placeholder: string;
+    error?: string;
+    onChange: (text: string) => void;
+};
+
 type ChoiceFieldProps = {
     id: string;
     label: string;
@@ -198,11 +237,21 @@ type ChoiceFieldProps = {
     error?: string;
     required?: boolean;
     onChange: (value: string) => void;
+    /** When given, picking `other.value` shows a text box under the dropdown for the sender's own words. */
+    other?: OtherAnswer;
 };
 
-function ChoiceField({ id, label, placeholder, options, value, error, required, onChange }: ChoiceFieldProps) {
+function ChoiceField({ id, label, placeholder, options, value, error, required, onChange, other }: ChoiceFieldProps) {
+    const showOther = other !== undefined && value === other.value;
+    const otherId = `${id}-other`;
+
     return (
-        <FormField label={label} htmlFor={id} error={error} required={required}>
+        <FormField
+            label={label}
+            htmlFor={id}
+            error={error ?? (showOther ? other.error : undefined)}
+            required={required}
+        >
             <Select value={value} onValueChange={onChange}>
                 <SelectTrigger id={id} className="w-full" aria-invalid={error ? true : undefined}>
                     <SelectValue placeholder={placeholder} />
@@ -215,6 +264,19 @@ function ChoiceField({ id, label, placeholder, options, value, error, required, 
                     ))}
                 </SelectContent>
             </Select>
+            {showOther && (
+                <Input
+                    id={otherId}
+                    autoFocus
+                    required={required}
+                    maxLength={150}
+                    aria-label={`${label}: in your own words`}
+                    aria-invalid={other.error ? true : undefined}
+                    placeholder={other.placeholder}
+                    value={other.text}
+                    onChange={(e) => other.onChange(e.target.value)}
+                />
+            )}
         </FormField>
     );
 }

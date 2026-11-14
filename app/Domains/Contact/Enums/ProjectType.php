@@ -15,6 +15,7 @@ enum ProjectType: string
     case Maintenance = 'maintenance';
     case LegacyUpgrade = 'legacy_upgrade';
     case Consulting = 'consulting';
+    /** The sender describes it in their own words (ContactMessage::project_type_other). */
     case Other = 'other';
 
     public function label(): string
