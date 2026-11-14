@@ -32,7 +32,7 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
     return (
         <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
             <Card>
-                <CardContent className="grid gap-5 pt-6">
+                <CardContent className="grid grid-cols-1 gap-5 pt-6">
                     <FormField required label="Title" htmlFor="title" error={errors.title}>
                         <Input
                             id="title"
@@ -63,7 +63,7 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
                             onChange={(e) => setData('excerpt', e.target.value)}
                         />
                     </FormField>
-                    <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <FormField
                             label="SEO title"
                             htmlFor="seo_title"
@@ -109,12 +109,12 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
                 </CardContent>
             </Card>
 
-            <aside className="grid min-w-0 content-start gap-6 lg:sticky lg:top-4">
+            <aside className="grid min-w-0 grid-cols-1 content-start gap-6 lg:sticky lg:top-4">
                 <Card>
                     <CardHeader>
                         <CardTitle>Publishing</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-5">
+                    <CardContent className="grid grid-cols-1 gap-5">
                         <FormField required label="Status" htmlFor="status" error={errors.status}>
                             <Select
                                 value={data.status}

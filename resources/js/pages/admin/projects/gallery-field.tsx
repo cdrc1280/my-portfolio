@@ -28,7 +28,7 @@ export function GalleryField({
     const kept = existing.filter((image) => !removedIds.includes(image.id));
 
     return (
-        <div className="grid gap-3">
+        <div className="grid grid-cols-1 gap-3">
             <Label htmlFor={id}>Screenshots</Label>
             {(kept.length > 0 || newFiles.length > 0) && (
                 <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -54,7 +54,7 @@ export function GalleryField({
                 type="file"
                 multiple
                 accept="image/jpeg,image/png,image/webp"
-                className="text-sm file:mr-3 file:rounded-md file:border file:bg-background file:px-3 file:py-1.5 file:text-sm file:font-medium"
+                className="w-full max-w-full text-sm file:mr-3 file:rounded-md file:border file:bg-background file:px-3 file:py-1.5 file:text-sm file:font-medium"
                 onChange={(event) => {
                     onNewFilesChange([...newFiles, ...Array.from(event.target.files ?? [])]);
                     event.target.value = '';

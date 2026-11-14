@@ -35,20 +35,20 @@ export function ImageUploadField({
     return (
         <div className="grid gap-2">
             <Label htmlFor={id}>{label}</Label>
-            <div className="flex items-start gap-4">
-                <div className="flex aspect-video w-48 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted">
+            <div className="flex flex-wrap items-start gap-4">
+                <div className="flex aspect-video w-48 max-w-full shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted">
                     {shownUrl ? (
                         <img src={shownUrl} alt={`${label} preview`} className="size-full object-cover" />
                     ) : (
                         <ImageIcon className="size-6 text-muted-foreground" aria-hidden />
                     )}
                 </div>
-                <div className="grid gap-2">
+                <div className="grid min-w-0 flex-1 basis-48 gap-2">
                     <input
                         id={id}
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
-                        className="text-sm file:mr-3 file:rounded-md file:border file:bg-background file:px-3 file:py-1.5 file:text-sm file:font-medium"
+                        className="w-full max-w-full text-sm file:mr-3 file:rounded-md file:border file:bg-background file:px-3 file:py-1.5 file:text-sm file:font-medium"
                         onChange={(event) => {
                             onFileChange(event.target.files?.[0] ?? null);
                             onRemovedChange(false);

@@ -72,13 +72,13 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
 
     return (
         <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
-            <div className="grid min-w-0 content-start gap-6">
+            <div className="grid min-w-0 grid-cols-1 content-start gap-6">
                 <Card>
                     <CardHeader>
                         <CardTitle>Header</CardTitle>
                         <CardDescription>Title, one-line summary, your role and dates.</CardDescription>
                     </CardHeader>
-                    <CardContent className="grid gap-5 sm:grid-cols-2">
+                    <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <FormField required label="Title" htmlFor="title" error={errors.title}>
                             <Input
                                 id="title"
@@ -154,7 +154,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                         <CardTitle>Case study</CardTitle>
                         <CardDescription>Markdown supported. Empty sections are hidden on the site.</CardDescription>
                     </CardHeader>
-                    <CardContent className="grid gap-5">
+                    <CardContent className="grid grid-cols-1 gap-5">
                         {markdown('problem', 'Problem', 'What was broken, slow or missing, in the client’s terms.')}
                         {markdown('role_details', 'My role', 'What you personally owned. A bullet list works well.')}
                         {markdown('architecture', 'Architecture', 'How the system fits together.', 6)}
@@ -206,7 +206,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                     <CardHeader>
                         <CardTitle>Links</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-5 sm:grid-cols-2">
+                    <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <FormField label="Live URL" htmlFor="live_url" error={errors.live_url}>
                             <Input
                                 id="live_url"
@@ -253,7 +253,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                     <CardHeader>
                         <CardTitle>Media</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-6">
+                    <CardContent className="grid grid-cols-1 gap-6">
                         <ImageUploadField
                             label="Cover image"
                             currentUrl={project?.cover_url ?? null}
@@ -279,7 +279,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                         <CardTitle>SEO</CardTitle>
                         <CardDescription>Optional. Falls back to the title and summary.</CardDescription>
                     </CardHeader>
-                    <CardContent className="grid gap-5">
+                    <CardContent className="grid grid-cols-1 gap-5">
                         <FormField
                             label="SEO title"
                             htmlFor="seo_title"
@@ -311,12 +311,12 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                 </Card>
             </div>
 
-            <aside className="grid min-w-0 content-start gap-6 lg:sticky lg:top-4">
+            <aside className="grid min-w-0 grid-cols-1 content-start gap-6 lg:sticky lg:top-4">
                 <Card>
                     <CardHeader>
                         <CardTitle>Publishing</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-5">
+                    <CardContent className="grid grid-cols-1 gap-5">
                         <FormField required label="Status" htmlFor="status" error={errors.status}>
                             <Select
                                 value={data.status}
@@ -352,7 +352,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                     <CardHeader>
                         <CardTitle id="tags-label">Technologies</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-2">
+                    <CardContent className="grid grid-cols-1 gap-2">
                         <TagPicker
                             tags={tags}
                             selected={data.tag_ids}

@@ -107,7 +107,7 @@ export default function CareerIndex({ experiences, education, certificates, empl
 
                 <AdminSplit aside={aside}>
                     <Tabs defaultValue="work">
-                        <TabsList>
+                        <TabsList className="max-w-full justify-start overflow-x-auto">
                             <TabsTrigger value="work">Work ({experiences.length})</TabsTrigger>
                             <TabsTrigger value="education">Education ({education.length})</TabsTrigger>
                             <TabsTrigger value="certificates">Certificates ({certificates.length})</TabsTrigger>

@@ -23,7 +23,9 @@ export function AdminSplit({
             )}
         >
             <div className="flex min-w-0 flex-col gap-6">{children}</div>
-            <aside className="grid min-w-0 content-start gap-4 xl:sticky xl:top-4 xl:self-start">{aside}</aside>
+            <aside className="grid min-w-0 grid-cols-1 content-start gap-4 xl:sticky xl:top-4 xl:self-start">
+                {aside}
+            </aside>
         </div>
     );
 }

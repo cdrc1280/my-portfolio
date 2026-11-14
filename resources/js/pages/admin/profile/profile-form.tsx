@@ -134,13 +134,13 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
     const hasResume = profile.resume_url !== null && !data.remove_resume;
 
     return (
-        <form onSubmit={submit} className="grid gap-6" noValidate>
+        <form onSubmit={submit} className="grid grid-cols-1 gap-6" noValidate>
             <Card>
                 <CardHeader>
                     <CardTitle>Identity</CardTitle>
                     <CardDescription>The hero, header and search results.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-5 sm:grid-cols-2">
+                <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {text('name', 'Name', { required: true })}
                     {text('headline', 'Role title', { hint: 'e.g. Full-stack developer', required: true })}
                     {longText(
@@ -170,7 +170,7 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
                 <CardHeader>
                     <CardTitle>Bio</CardTitle>
                 </CardHeader>
-                <CardContent className="grid gap-5 sm:grid-cols-2">
+                <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {longText('short_bio', 'Short bio', 2, 'One or two sentences under the hero headline.')}
                     {longText('bio', 'Long bio', 10, 'The About page. Markdown supported.', true)}
                     {longText('currently_learning', 'Currently learning', 2, 'Shown on the About page. Optional.')}
@@ -182,7 +182,7 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
                     <CardTitle>Availability & contact</CardTitle>
                     <CardDescription>Shown in the hero, on Services and on Contact.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-5 sm:grid-cols-2">
+                <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     <FormField
                         required
                         label="Availability"
@@ -227,9 +227,9 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
                     <CardTitle>Résumé</CardTitle>
                     <CardDescription>PDF offered for download on the About page.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-3">
+                <CardContent className="grid grid-cols-1 gap-3">
                     {hasResume && !data.resume && (
-                        <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm">
+                        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm">
                             <a
                                 href={profile.resume_url ?? undefined}
                                 className="inline-flex items-center gap-2 hover:underline"
@@ -274,7 +274,7 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
                     <CardTitle>SEO defaults</CardTitle>
                     <CardDescription>Used by any page that doesn’t set its own.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-5 sm:grid-cols-2">
+                <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {text('seo_title', 'Default title', { hint: 'Up to 70 characters.', wide: true })}
                     {longText('seo_description', 'Default description', 2, 'Up to 200 characters.')}
                     <div className="sm:col-span-2">
@@ -296,7 +296,7 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
                 <CardHeader>
                     <CardTitle>Features</CardTitle>
                 </CardHeader>
-                <CardContent className="grid gap-5">
+                <CardContent className="grid grid-cols-1 gap-5">
                     <div className="flex items-center justify-between gap-4">
                         <div>
                             <Label htmlFor="blog_enabled">Blog</Label>

@@ -43,7 +43,7 @@ export function EngagementSettingsForm({ engagement }: { engagement: EngagementS
                     <CardTitle>Engagement & process</CardTitle>
                     <CardDescription>Shown on the public Services page. Empty rows are ignored.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-6">
+                <CardContent className="grid grid-cols-1 gap-6">
                     <FormField
                         label="Starting rate"
                         htmlFor="starting_rate"
