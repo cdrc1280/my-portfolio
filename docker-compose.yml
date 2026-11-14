@@ -50,7 +50,26 @@ services:
   node:
     <<: *app
     user: www-data
-    command: sh -c "npm install && npm run dev"
+    # public/hot tells Laravel to load assets from the Vite dev server. A copy
+    # left over from the last run would point the page at a server that isn't
+    # up yet while `npm install` runs, so every script, style and font fails.
+    # Removing it first makes Laravel use public/build until Vite writes a
+    # fresh one. The `vp` wrapper doesn't hand the stop signal on to Vite, so
+    # the shell traps it and deletes the file itself when the container stops.
+    # The PHP-FPM base image stops containers with SIGQUIT; this one wants SIGTERM.
+    stop_signal: SIGTERM
+    init: true
+    command:
+      - sh
+      - -c
+      - |
+        rm -f public/hot
+        npm install || exit 1
+        trap 'rm -f public/hot; kill $$pid 2>/dev/null; exit 0' TERM INT
+        npm run dev &
+        pid=$$!
+        wait $$pid
+        rm -f public/hot
     environment:
       VITE_HOST: 0.0.0.0
       VITE_HMR_HOST: localhost
