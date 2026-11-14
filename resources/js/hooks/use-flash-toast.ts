@@ -13,7 +13,8 @@ export function useFlashToast(): void {
                 return;
             }
 
-            toast[data.type](data.message);
+            // Same type + message reuses the toast on screen, so submitting twice never stacks duplicates.
+            toast[data.type](data.message, { id: `${data.type}:${data.message}` });
         });
     }, []);
 }
