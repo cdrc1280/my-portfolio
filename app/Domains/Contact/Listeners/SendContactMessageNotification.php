@@ -8,6 +8,7 @@ use App\Domains\Contact\Events\ContactMessageSubmitted;
 use App\Domains\Contact\Notifications\NewContactMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Emails the site owner about a new message, on the queue so the visitor
@@ -27,6 +28,16 @@ final class SendContactMessageNotification implements ShouldQueue
             return;
         }
 
-        Notification::route('mail', $recipient)->notify(new NewContactMessage($event->message));
+        try {
+            Notification::route('mail', $recipient)->notify(new NewContactMessage($event->message));
+        } catch (TransportExceptionInterface $e) {
+            // A queue worker retries it. Without one (Vercel sends mail during the request), a mail
+            // server problem is logged instead of failing the visitor's submission: the brief is saved.
+            if (config('queue.default') !== 'sync') {
+                throw $e;
+            }
+
+            report($e);
+        }
     }
 }

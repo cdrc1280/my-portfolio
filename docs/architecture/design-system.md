@@ -29,3 +29,5 @@ with a persisted light/dark toggle. Admin and login use the same tokens with no 
   server error) returns to the page with an error toast (`App\Shared\Exceptions\FriendlyErrorResponse`). A page load
   shows the themed error page. A React rendering crash shows a recovery screen (`AppErrorBoundary`), and a network
   failure shows a toast (`useHttpErrorFallback`).
+- **Toasts:** Sonner, top right below the sticky header, 5 seconds, with a close button. Each is a card with a coloured
+  accent bar and icon per type (emerald success, red error, amber warning, sky info), styled in `app.tsx`.

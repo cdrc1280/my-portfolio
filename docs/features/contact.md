@@ -32,7 +32,7 @@ The public project-brief form and the admin inbox.
 - **Rate limit:** 3 briefs per hour per IP (`portfolio.contact.per_hour`). Going over returns to the form with an error toast saying when to try again, and keeps everything the visitor typed (`succeeded()` guard, `preserveState`).
 - **Spam:** a filled honeypot is logged and silently dropped. The bot gets the same success response as a person.
 - **Privacy:** the IP is stored only as an HMAC (`ip_hash`, keyed by `APP_KEY`).
-- **On submit,** `ContactMessageSubmitted` fires two queued listeners: `SendContactMessageNotification` (to `portfolio.contact.notify_email`) and `SendContactAutoReply` (confirmation to the sender, including the response time).
+- **On submit,** `ContactMessageSubmitted` fires two queued listeners: `SendContactMessageNotification` (to `portfolio.contact.notify_email`) and `SendContactAutoReply` (confirmation to the sender, including the response time). The event fires after the brief is committed. On a queue worker a mail failure is retried (3 tries); on the `sync` queue (Vercel, where mail is sent during the request) it is logged instead, so the visitor still gets the success toast and the brief stays in the inbox.
 - **Read state:** opening a message marks it read. "Mark unread" reverses that.
 - **Message page:** the body is on the left; sender and project brief are in the side rail.
 

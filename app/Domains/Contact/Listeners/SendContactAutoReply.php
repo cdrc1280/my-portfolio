@@ -9,6 +9,7 @@ use App\Domains\Contact\Notifications\ContactMessageReceived;
 use App\Domains\Profile\Actions\GetProfileAction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Confirms receipt to the sender, on the queue so the form responds instantly.
@@ -27,7 +28,17 @@ final class SendContactAutoReply implements ShouldQueue
     {
         $profile = $this->getProfile->execute();
 
-        Notification::route('mail', [$event->message->email => $event->message->name])
-            ->notify(new ContactMessageReceived($event->message, $profile->name, $profile->response_time));
+        try {
+            Notification::route('mail', [$event->message->email => $event->message->name])
+                ->notify(new ContactMessageReceived($event->message, $profile->name, $profile->response_time));
+        } catch (TransportExceptionInterface $e) {
+            // A queue worker retries it. Without one (Vercel sends mail during the request), a mail
+            // server problem is logged instead of failing the visitor's submission: the brief is saved.
+            if (config('queue.default') !== 'sync') {
+                throw $e;
+            }
+
+            report($e);
+        }
     }
 }

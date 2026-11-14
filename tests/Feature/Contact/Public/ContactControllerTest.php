@@ -2,8 +2,13 @@
 
 use App\Domains\Contact\Events\ContactMessageSubmitted;
 use App\Domains\Contact\Models\ContactMessage;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia as Assert;
+use Symfony\Component\Mailer\Exception\TransportException;
+use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mailer\Transport\AbstractTransport;
 
 beforeEach(fn () => Event::fake([ContactMessageSubmitted::class]));
 
@@ -118,4 +123,37 @@ test('own words are dropped when a listed option is picked', function () {
     expect(ContactMessage::query()->sole())
         ->project_type_other->toBeNull()
         ->projectTypeLabel()->toBe('New web application');
+});
+
+test('a mail server failure without a queue worker still saves the brief', function () {
+    // Listeners run for real (undoing this file's Event::fake), on the sync queue as on Vercel, against a
+    // mail server that refuses the login.
+    $events = Event::getFacadeRoot()->dispatcher;
+    Event::swap($events);
+    Model::setEventDispatcher($events);
+    Mail::extend('refusing', fn () => new class extends AbstractTransport
+    {
+        protected function doSend(SentMessage $message): void
+        {
+            throw new TransportException('535 Username and Password not accepted.');
+        }
+
+        public function __toString(): string
+        {
+            return 'refusing';
+        }
+    });
+    config([
+        'queue.default' => 'sync',
+        'mail.default' => 'refusing',
+        'mail.mailers.refusing' => ['transport' => 'refusing'],
+        'portfolio.contact.notify_email' => 'owner@example.com',
+    ]);
+    $this->withoutExceptionHandling([TransportException::class]);
+
+    $this->post(route('contact.store'), contactPayload())
+        ->assertRedirect(route('contact.show'))
+        ->assertInertiaFlash('toast.type', 'success');
+
+    $this->assertDatabaseCount('contact_messages', 1);
 });
