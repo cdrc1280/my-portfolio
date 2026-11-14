@@ -1,5 +1,6 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import AppLogoIcon from '@/components/custom/app-logo-icon';
 import { containers } from '@/components/custom/section';
 import { SocialLinks } from '@/components/custom/social-links';
@@ -71,8 +72,14 @@ function NavLinks({ vertical = false }: { vertical?: boolean }) {
 }
 
 function MobileMenu() {
+    const [open, setOpen] = useState(false);
+
+    // The header stays mounted across Inertia visits, so close the menu as soon as a link in it
+    // (or anywhere else) starts a visit.
+    useEffect(() => router.on('start', () => setOpen(false)), []);
+
     return (
-        <Sheet>
+        <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
                     <Menu className="size-5" aria-hidden />
