@@ -16,7 +16,6 @@ import {
 import AppLogo from '@/components/custom/app-logo';
 import { NavFooter } from '@/components/custom/nav-footer';
 import { NavMain } from '@/components/custom/nav-main';
-import { NavUser } from '@/components/custom/nav-user';
 import {
     Sidebar,
     SidebarContent,
@@ -82,7 +81,6 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
             </SidebarFooter>
         </Sidebar>
     );

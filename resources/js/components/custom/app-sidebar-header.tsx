@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/custom/breadcrumbs';
+import { NavUser } from '@/components/custom/nav-user';
 import { NotificationBell } from '@/components/custom/notification-bell';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
@@ -11,8 +12,9 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 <SidebarTrigger className="-ml-1 md:hidden" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-1">
                 <NotificationBell />
+                <NavUser />
             </div>
         </header>
     );
