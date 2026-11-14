@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
@@ -63,4 +64,37 @@ test('a failing migration never wipes a site that is set up', function () {
     $this->artisan('app:release')->assertFailed();
 
     expect(User::query()->count())->toBe(1);
+});
+
+test('a release copies ADMIN_EMAIL and ADMIN_PASSWORD onto the existing admin', function () {
+    $admin = User::factory()->create(['email' => 'old@example.com', 'is_admin' => true]);
+    $other = User::factory()->create(['email' => 'someone@example.com']);
+    config([
+        'portfolio.admin.sync' => true,
+        'portfolio.admin.email' => 'new@example.com',
+        'portfolio.admin.password' => 'a-new-long-password',
+    ]);
+
+    $this->artisan('app:release')->assertSuccessful();
+
+    $admin->refresh();
+    expect($admin->email)->toBe('new@example.com')
+        ->and(Hash::check('a-new-long-password', $admin->password))->toBeTrue()
+        ->and($other->refresh()->email)->toBe('someone@example.com');
+});
+
+test('the admin login is left alone unless both env values are set', function () {
+    $admin = User::factory()->create(['email' => 'old@example.com', 'is_admin' => true]);
+    $hash = $admin->password;
+    config([
+        'portfolio.admin.sync' => false,
+        'portfolio.admin.email' => 'admin@example.com',
+        'portfolio.admin.password' => 'password',
+    ]);
+
+    $this->artisan('app:release')->assertSuccessful();
+
+    $admin->refresh();
+    expect($admin->email)->toBe('old@example.com')
+        ->and($admin->password)->toBe($hash);
 });

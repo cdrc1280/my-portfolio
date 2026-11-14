@@ -13,7 +13,9 @@ visitor → Vercel (HTTPS, CDN) → container: FrankenPHP (Laravel) + Node SSR s
   migrates under a database lock, so it is safe when several instances start at once, and on the very first release it
   creates your admin account and the real portfolio content. If migrating fails before the site was ever set up (no
   user exists yet, e.g. an instance was stopped mid-migration), it wipes that half-built database and starts again;
-  once a user exists it never wipes anything. The very first visit may therefore show an error page for
+  once a user exists it never wipes anything. When both `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set, every release also
+  copies them onto the existing admin, so changing them and redeploying changes the login (and resets a password changed
+  in the admin Settings page). The very first visit may therefore show an error page for
   a few seconds while the database is being set up.
 - **Region:** `vercel.json` pins the site to Singapore (`sin1`), next to the database. If you create Neon in another
   region, change `regions` to the matching Vercel region, or every query crosses an ocean.
@@ -125,7 +127,7 @@ to the new domain and redeploy.
 | Build fails | Deployments → the failed build → **Build Logs**. Paste the error to me if it's unclear. |
 | "No application encryption key" | `APP_KEY` is missing or not prefixed with `base64:`. Add it and redeploy. |
 | Errors mentioning the database | Check that Neon is connected to the project (**Storage** tab), then redeploy. The runtime logs show the `app:release` output. |
-| Can't sign in to `/admin` | The admin is created only on the first release, with the env values at that moment. Check `ADMIN_EMAIL`, or reset the password from the Neon console. |
+| Can't sign in to `/admin` | Each release sets the admin's login from `ADMIN_EMAIL` and `ADMIN_PASSWORD` (only when both are set). Change them, redeploy, and check the runtime logs for "Updated the admin login". |
 | Runtime errors | Project → **Logs** (runtime logs). Laravel logs go there because `LOG_CHANNEL=stderr`. |
 | "could not connect to $PORT" | Something slow ran before the web server started. `start.sh` must start FrankenPHP immediately and keep slow work in the background. |
 | Every page is slow | The site and database are in different regions. Match `regions` in `vercel.json` to the Neon region. |

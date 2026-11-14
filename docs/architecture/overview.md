@@ -44,7 +44,7 @@ Route → Controller ─► Data (validates + normalizes input) ─► Action (w
 - **Uploads** go through one disk, `filesystems.media_disk` (`MEDIA_DISK`): `public` locally, or `database` on Vercel.
   The `database` disk (`App\Shared\Storage\DatabaseFilesystemAdapter`) keeps files in `stored_files`, and
   `App\Shared\Controllers\MediaController` serves them at `/media/<path>` (`routes/media.php`).
-- **Releases:** `php artisan app:release` migrates under a Postgres advisory lock and seeds only when no user exists.
+- **Releases:** `php artisan app:release` migrates under a Postgres advisory lock, seeds only when no user exists, and copies `ADMIN_EMAIL`/`ADMIN_PASSWORD` onto the admin when both are set.
   Vercel containers run it on start.
 - **Databases:** MySQL locally and self-hosted, Postgres (Neon) on Vercel. The test suite passes on both, plus SQLite.
 - **Paginated lists** go through `Shared\Support\Paginated::from()`, which keeps the `{ data, links, meta }`

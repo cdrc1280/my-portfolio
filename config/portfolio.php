@@ -63,12 +63,18 @@ return [
     |--------------------------------------------------------------------------
     | Admin account (created by the database seeder)
     |--------------------------------------------------------------------------
+    |
+    | `sync` is on only when both ADMIN_EMAIL and ADMIN_PASSWORD are set. Then
+    | `app:release` copies them onto the existing admin on every deploy, so the
+    | fallback login below is never written over a real one.
+    |
     */
 
     'admin' => [
         'name' => env('ADMIN_NAME', 'Admin'),
         'email' => env('ADMIN_EMAIL', 'admin@example.com'),
         'password' => env('ADMIN_PASSWORD', 'password'),
+        'sync' => filled(env('ADMIN_EMAIL')) && filled(env('ADMIN_PASSWORD')),
     ],
 
 ];
