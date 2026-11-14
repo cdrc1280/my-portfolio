@@ -58,8 +58,9 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [{ title: 'View site', href: home(), icon: ExternalLink }];
 
 export function AppSidebar() {
+    // The inset variant has no edge of its own, and in dark mode its background matches the page.
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="inset" className="border-r border-sidebar-border">
             {/* Collapse toggle sits right of the name. When the sidebar is icon-only the logo is hidden, so the
                 toggle keeps its place at the top of the icon column. */}
             <SidebarHeader className="flex-row items-center gap-0 group-data-[collapsible=icon]:justify-center">
