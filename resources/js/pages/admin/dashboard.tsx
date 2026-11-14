@@ -81,7 +81,7 @@ export default function Dashboard({ stats, recentMessages, leads, health, availa
                     }
                 />
 
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-12">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12">
                     <BentoTile
                         title="Upcoming calls"
                         icon={CalendarClock}
@@ -183,7 +183,7 @@ function StatTile({
     return (
         <Link
             href={href}
-            className="group rounded-xl border bg-card p-5 transition-colors hover:border-foreground/20 xl:col-span-3"
+            className="group min-w-0 rounded-xl border bg-card p-5 transition-colors hover:border-foreground/20 xl:col-span-3"
         >
             <div className="flex items-start justify-between gap-4">
                 <div>

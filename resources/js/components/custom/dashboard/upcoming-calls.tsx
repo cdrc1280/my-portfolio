@@ -29,7 +29,7 @@ export function UpcomingCalls({ state, bookingUrl }: { state: BookingsState; boo
                     </li>
                     <li>
                         Add it to <code className="rounded bg-muted px-1 font-mono text-xs">.env</code> as{' '}
-                        <code className="rounded bg-muted px-1 font-mono text-xs">CALENDLY_TOKEN=…</code>
+                        <code className="rounded bg-muted px-1 font-mono text-xs break-all">CALENDLY_TOKEN=…</code>
                     </li>
                     <li>Reload this page.</li>
                 </ol>

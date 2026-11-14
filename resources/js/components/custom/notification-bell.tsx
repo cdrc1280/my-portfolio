@@ -77,7 +77,11 @@ export function NotificationBell() {
     return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
             <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={8} className="w-96 overflow-hidden rounded-xl p-0">
+            <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-xl p-0"
+            >
                 <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
                     <div>
                         <p className="text-sm font-medium">Notifications</p>

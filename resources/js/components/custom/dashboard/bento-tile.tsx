@@ -16,16 +16,16 @@ export function BentoTile({ title, icon: Icon, action, className, children }: Be
     return (
         <section
             aria-label={title}
-            className={cn('flex flex-col rounded-xl border bg-card p-5 text-card-foreground', className)}
+            className={cn('flex min-w-0 flex-col rounded-xl border bg-card p-5 text-card-foreground', className)}
         >
             <header className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="flex items-center gap-2 text-sm font-medium">
+                <h2 className="flex min-w-0 items-center gap-2 text-sm font-medium">
                     {Icon && <Icon className="size-4 text-muted-foreground" aria-hidden />}
                     {title}
                 </h2>
                 {action}
             </header>
-            <div className="flex-1">{children}</div>
+            <div className="min-w-0 flex-1">{children}</div>
         </section>
     );
 }

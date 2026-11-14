@@ -32,7 +32,7 @@ export default function ShowMessage({ message }: { message: ContactMessage }) {
                             <ArrowLeft aria-hidden /> Inbox
                         </Link>
                     </Button>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                         <Button asChild>
                             <a href={`mailto:${message.email}?subject=${replySubject}`}>
                                 <Mail aria-hidden /> Reply
@@ -85,12 +85,12 @@ export default function ShowMessage({ message }: { message: ContactMessage }) {
                         </>
                     }
                 >
-                    <article className="space-y-4 rounded-xl border p-6">
+                    <article className="min-w-0 space-y-4 rounded-xl border p-4 sm:p-6">
                         <header className="space-y-1 border-b pb-4">
                             <h1 className="text-xl font-semibold tracking-tight">
                                 {message.project_type ?? 'General enquiry'}
                             </h1>
-                            <p className="text-sm">
+                            <p className="text-sm break-words">
                                 {message.name}{' '}
                                 <a href={`mailto:${message.email}`} className="text-muted-foreground hover:underline">
                                     &lt;{message.email}&gt;
@@ -102,7 +102,7 @@ export default function ShowMessage({ message }: { message: ContactMessage }) {
                                 </p>
                             )}
                         </header>
-                        <p className="max-w-prose leading-relaxed whitespace-pre-line">{message.message}</p>
+                        <p className="max-w-prose leading-relaxed break-words whitespace-pre-line">{message.message}</p>
                     </article>
                 </AdminSplit>
             </div>

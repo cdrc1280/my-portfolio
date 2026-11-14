@@ -30,7 +30,7 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
     };
 
     return (
-        <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
+        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
             <Card>
                 <CardContent className="grid gap-5 pt-6">
                     <FormField required label="Title" htmlFor="title" error={errors.title}>
@@ -109,7 +109,7 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
                 </CardContent>
             </Card>
 
-            <aside className="grid content-start gap-6 lg:sticky lg:top-4">
+            <aside className="grid min-w-0 content-start gap-6 lg:sticky lg:top-4">
                 <Card>
                     <CardHeader>
                         <CardTitle>Publishing</CardTitle>

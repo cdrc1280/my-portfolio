@@ -15,7 +15,7 @@ export function GitHubActivity({ activity }: { activity: GitHubActivityData }) {
     ];
 
     return (
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
             <div className="space-y-6">
                 <dl className="grid grid-cols-2 gap-4">
                     {stats.map((stat) => (
@@ -88,7 +88,11 @@ export function GitHubActivity({ activity }: { activity: GitHubActivityData }) {
 
 export function GitHubActivitySkeleton() {
     return (
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr]" aria-busy="true" aria-label="Loading GitHub activity">
+        <div
+            className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]"
+            aria-busy="true"
+            aria-label="Loading GitHub activity"
+        >
             <div className="grid grid-cols-2 gap-4">
                 {[0, 1, 2, 3].map((key) => (
                     <Skeleton key={key} className="h-20" />

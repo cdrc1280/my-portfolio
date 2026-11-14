@@ -28,7 +28,7 @@ export function AdminPageSkeleton({ path }: { path: string }) {
                 </div>
 
                 {variant === 'dashboard' && (
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-12">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-12">
                         <Skeleton className="h-80 rounded-xl md:col-span-2 xl:col-span-8 xl:row-span-2 xl:h-auto" />
                         <Skeleton className="h-48 rounded-xl xl:col-span-4" />
                         <Skeleton className="h-48 rounded-xl xl:col-span-4" />
@@ -41,7 +41,7 @@ export function AdminPageSkeleton({ path }: { path: string }) {
                 )}
 
                 {variant === 'list' && (
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
                         <div className="space-y-2">
                             {[0, 1, 2, 3, 4, 5].map((key) => (
                                 <div key={key} className="flex items-center gap-3 rounded-lg border p-3">
@@ -63,7 +63,7 @@ export function AdminPageSkeleton({ path }: { path: string }) {
                 )}
 
                 {variant === 'form' && (
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
                         <div className="space-y-6">
                             {[0, 1].map((card) => (
                                 <div key={card} className="space-y-5 rounded-xl border p-6">
@@ -88,7 +88,7 @@ export function AdminPageSkeleton({ path }: { path: string }) {
                 )}
 
                 {variant === 'detail' && (
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
                         <div className="space-y-4 rounded-xl border p-6">
                             <Skeleton className="h-6 w-1/2" />
                             <Skeleton className="h-4 w-1/3" />

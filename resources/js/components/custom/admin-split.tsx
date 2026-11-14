@@ -18,12 +18,12 @@ export function AdminSplit({
     return (
         <div
             className={cn(
-                'grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_22rem]',
+                'grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_22rem]',
                 className,
             )}
         >
             <div className="flex min-w-0 flex-col gap-6">{children}</div>
-            <aside className="grid content-start gap-4 xl:sticky xl:top-4 xl:self-start">{aside}</aside>
+            <aside className="grid min-w-0 content-start gap-4 xl:sticky xl:top-4 xl:self-start">{aside}</aside>
         </div>
     );
 }
@@ -43,7 +43,10 @@ export function SidePanel({
     children: ReactNode;
 }) {
     return (
-        <section aria-label={title} className={cn('rounded-xl border bg-card p-5 text-card-foreground', className)}>
+        <section
+            aria-label={title}
+            className={cn('min-w-0 rounded-xl border bg-card p-5 text-card-foreground', className)}
+        >
             <header className="mb-3 flex items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 text-sm font-medium">
                     {Icon && <Icon className="size-4 text-muted-foreground" aria-hidden />}

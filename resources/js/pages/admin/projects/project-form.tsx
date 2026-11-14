@@ -71,8 +71,8 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
     );
 
     return (
-        <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
-            <div className="grid content-start gap-6">
+        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
+            <div className="grid min-w-0 content-start gap-6">
                 <Card>
                     <CardHeader>
                         <CardTitle>Header</CardTitle>
@@ -311,7 +311,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                 </Card>
             </div>
 
-            <aside className="grid content-start gap-6 lg:sticky lg:top-4">
+            <aside className="grid min-w-0 content-start gap-6 lg:sticky lg:top-4">
                 <Card>
                     <CardHeader>
                         <CardTitle>Publishing</CardTitle>

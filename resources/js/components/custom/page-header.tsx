@@ -26,7 +26,7 @@ export function PageHeader({ title, description, actions, size = 'default', clas
                     <p className={cn('max-w-2xl text-muted-foreground', size === 'lg' && 'text-lg')}>{description}</p>
                 )}
             </div>
-            {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+            {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
         </header>
     );
 }
