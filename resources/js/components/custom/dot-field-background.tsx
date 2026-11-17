@@ -1,6 +1,6 @@
-import { useReducedMotion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import DotField from '@/components/custom/dot-field';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
 /**
  * Emerald (the `--primary` accent) fading into zinc, as hex because DotField only parses hex and rgb.
@@ -39,7 +39,7 @@ function useIsDark(): boolean {
  */
 export function DotFieldBackground() {
     const dark = useIsDark();
-    const reduceMotion = useReducedMotion() ?? false;
+    const reduceMotion = useReducedMotion();
     const colors = dark ? PALETTE.dark : PALETTE.light;
 
     return (

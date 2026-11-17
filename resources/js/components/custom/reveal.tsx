@@ -1,9 +1,9 @@
-import { motion, useReducedMotion } from 'motion/react';
-import { Fragment } from 'react';
-import type { ReactNode } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+// The animations are CSS (`[data-reveal]`, `.reveal-word` in app.css), inside a
+// `prefers-reduced-motion: no-preference` block, so they are static with reduced motion.
 
 /** Splits on spaces and marks words inside *accent runs*, which may span several words. */
 function splitAccents(text: string): Array<{ text: string; accent: boolean }> {
@@ -32,18 +32,39 @@ export function Reveal({
     delay?: number;
     y?: number;
 }) {
-    const reduceMotion = useReducedMotion();
+    const ref = useRef<HTMLDivElement>(null);
+    const [shown, setShown] = useState(false);
+
+    useEffect(() => {
+        const element = ref.current;
+
+        if (!element) {
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry?.isIntersecting) {
+                    setShown(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '0px 0px -8% 0px' },
+        );
+        observer.observe(element);
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
-        <motion.div
+        <div
+            ref={ref}
+            data-reveal={shown ? 'shown' : 'hidden'}
             className={className}
-            initial={reduceMotion ? false : { opacity: 0, y }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '0px 0px -8% 0px' }}
-            transition={{ duration: 0.6, ease: EASE, delay }}
+            style={{ '--reveal-y': `${y}px`, '--reveal-delay': `${delay}s` } as CSSProperties}
         >
             {children}
-        </motion.div>
+        </div>
     );
 }
 
@@ -62,36 +83,27 @@ export function RevealWords({
     as?: 'h1' | 'h2' | 'p';
     id?: string;
 }) {
-    const reduceMotion = useReducedMotion();
     const words = splitAccents(text);
 
     return (
         <Tag id={id} className={cn('text-balance', className)}>
             <span className="sr-only">{text.replaceAll('*', '')}</span>
-            <motion.span
-                aria-hidden
-                initial={reduceMotion ? false : 'hidden'}
-                animate="shown"
-                transition={{ staggerChildren: 0.045 }}
-            >
+            <span aria-hidden>
                 {words.map((word, index) => (
                     // The space must sit outside the inline-block mask, or the browser collapses it.
                     <Fragment key={index}>
                         <span className="inline-block overflow-hidden pb-[0.1em] align-bottom">
-                            <motion.span
-                                className={cn('inline-block', word.accent && 'text-primary')}
-                                variants={{
-                                    hidden: { y: '105%' },
-                                    shown: { y: '0%', transition: { duration: 0.6, ease: EASE } },
-                                }}
+                            <span
+                                className={cn('reveal-word inline-block', word.accent && 'text-primary')}
+                                style={{ '--word-delay': `${index * 0.045}s` } as CSSProperties}
                             >
                                 {word.text}
-                            </motion.span>
+                            </span>
                         </span>
                         {index < words.length - 1 && ' '}
                     </Fragment>
                 ))}
-            </motion.span>
+            </span>
         </Tag>
     );
 }

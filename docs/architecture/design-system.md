@@ -14,8 +14,12 @@ with a persisted light/dark toggle. Admin and login use the same tokens with no 
 - **Panels:** public content sits on `surface` panels (`components/custom/section.tsx`) so text never lies on the dot
   field. Light mode is a soft off-white (`#f6f4f1`), not pure white.
 - **Motion:** an interactive dot-field backdrop (WebGL, idle when the pointer is still), headline words
-  rising into place, and fade-ups as sections enter. With `prefers-reduced-motion`, the dots are static and
-  nothing animates.
+  rising into place, and fade-ups as sections enter. The reveals are plain CSS (`[data-reveal]`,
+  `.reveal-word`, `.draw-in` in `app.css`, triggered by an IntersectionObserver in `reveal.tsx`), so the
+  public pages ship no animation library. With `prefers-reduced-motion`, the dots are static and nothing
+  animates.
+- **Bundle:** the admin sidebar shell is lazy-loaded inside `layouts/admin-layout.tsx`, so public visitors
+  never download admin code.
 - Headlines take `*asterisks*` around words to set them in the accent colour.
 
 
