@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import type { FormEvent } from 'react';
+import { FormActions } from '@/components/custom/form-actions';
 import { FormField } from '@/components/custom/form-field';
 import { ImageUploadField } from '@/components/custom/image-upload-field';
 import InputError from '@/components/custom/input-error';
@@ -71,7 +72,11 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
     );
 
     return (
-        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
+        <form
+            onSubmit={onSubmit}
+            className="grid grid-cols-1 gap-6 pb-20 md:pb-0 lg:grid-cols-[minmax(0,1fr)_20rem]"
+            noValidate
+        >
             <div className="grid min-w-0 grid-cols-1 content-start gap-6">
                 <Card>
                     <CardHeader>
@@ -336,7 +341,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                         </FormField>
                         {toggle('is_featured', 'Featured', 'Shown on the home page (first three).')}
                         {toggle('is_confidential', 'Confidential', 'Hides the repo and shows “demo on request”.')}
-                        <div className="flex gap-2">
+                        <FormActions>
                             <Button type="submit" disabled={processing} className="flex-1">
                                 {processing && <Spinner />}
                                 {project ? 'Save changes' : 'Create project'}
@@ -344,7 +349,7 @@ export function ProjectForm({ project, tags, statuses }: ProjectFormProps) {
                             <Button variant="outline" asChild>
                                 <Link href={index()}>Cancel</Link>
                             </Button>
-                        </div>
+                        </FormActions>
                     </CardContent>
                 </Card>
 

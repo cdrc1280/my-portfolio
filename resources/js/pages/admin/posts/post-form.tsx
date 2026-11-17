@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import type { FormEvent } from 'react';
+import { FormActions } from '@/components/custom/form-actions';
 import { FormField } from '@/components/custom/form-field';
 import { ImageUploadField } from '@/components/custom/image-upload-field';
 import { TagPicker } from '@/components/custom/tag-picker';
@@ -30,7 +31,11 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
     };
 
     return (
-        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" noValidate>
+        <form
+            onSubmit={onSubmit}
+            className="grid grid-cols-1 gap-6 pb-20 md:pb-0 lg:grid-cols-[minmax(0,1fr)_20rem]"
+            noValidate
+        >
             <Card>
                 <CardContent className="grid grid-cols-1 gap-5 pt-6">
                     <FormField required label="Title" htmlFor="title" error={errors.title}>
@@ -145,7 +150,7 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
                                 onChange={(e) => setData('published_at', e.target.value)}
                             />
                         </FormField>
-                        <div className="flex gap-2">
+                        <FormActions>
                             <Button type="submit" disabled={processing} className="flex-1">
                                 {processing && <Spinner />}
                                 {post ? 'Save changes' : 'Create post'}
@@ -153,7 +158,7 @@ export function PostForm({ post, tags, statuses }: PostFormProps) {
                             <Button variant="outline" asChild>
                                 <Link href={index()}>Cancel</Link>
                             </Button>
-                        </div>
+                        </FormActions>
                     </CardContent>
                 </Card>
                 <Card>

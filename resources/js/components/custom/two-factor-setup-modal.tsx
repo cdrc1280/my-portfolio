@@ -4,8 +4,15 @@ import { Check, Copy, ScanLine } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AlertError from '@/components/custom/alert-error';
 import InputError from '@/components/custom/input-error';
+import {
+    ResponsiveDialog,
+    ResponsiveDialogBody,
+    ResponsiveDialogContent,
+    ResponsiveDialogDescription,
+    ResponsiveDialogHeader,
+    ResponsiveDialogTitle,
+} from '@/components/custom/responsive-dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Spinner } from '@/components/ui/spinner';
 import { useAppearance } from '@/hooks/use-appearance';
@@ -275,31 +282,35 @@ export default function TwoFactorSetupModal({
     }, [isOpen, qrCodeSvg]);
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader className="flex items-center justify-center">
-                    <GridScanIcon />
-                    <DialogTitle>{modalConfig.title}</DialogTitle>
-                    <DialogDescription className="text-center">{modalConfig.description}</DialogDescription>
-                </DialogHeader>
+        <ResponsiveDialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+            <ResponsiveDialogContent className="sm:max-w-md">
+                <ResponsiveDialogBody className="pb-6">
+                    <ResponsiveDialogHeader className="flex items-center justify-center text-center group-data-[vaul-drawer-direction=bottom]/drawer-content:text-center">
+                        <GridScanIcon />
+                        <ResponsiveDialogTitle>{modalConfig.title}</ResponsiveDialogTitle>
+                        <ResponsiveDialogDescription className="text-center">
+                            {modalConfig.description}
+                        </ResponsiveDialogDescription>
+                    </ResponsiveDialogHeader>
 
-                <div className="flex flex-col items-center space-y-5">
-                    {showVerificationStep ? (
-                        <TwoFactorVerificationStep
-                            onClose={handleClose}
-                            onBack={() => setShowVerificationStep(false)}
-                        />
-                    ) : (
-                        <TwoFactorSetupStep
-                            qrCodeSvg={qrCodeSvg}
-                            manualSetupKey={manualSetupKey}
-                            buttonText={modalConfig.buttonText}
-                            onNextStep={handleModalNextStep}
-                            errors={errors}
-                        />
-                    )}
-                </div>
-            </DialogContent>
-        </Dialog>
+                    <div className="flex flex-col items-center space-y-5">
+                        {showVerificationStep ? (
+                            <TwoFactorVerificationStep
+                                onClose={handleClose}
+                                onBack={() => setShowVerificationStep(false)}
+                            />
+                        ) : (
+                            <TwoFactorSetupStep
+                                qrCodeSvg={qrCodeSvg}
+                                manualSetupKey={manualSetupKey}
+                                buttonText={modalConfig.buttonText}
+                                onNextStep={handleModalNextStep}
+                                errors={errors}
+                            />
+                        )}
+                    </div>
+                </ResponsiveDialogBody>
+            </ResponsiveDialogContent>
+        </ResponsiveDialog>
     );
 }

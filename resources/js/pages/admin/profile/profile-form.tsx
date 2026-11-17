@@ -1,6 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import { FileText, X } from 'lucide-react';
 import type { FormEvent, ReactNode } from 'react';
+import { FormActions } from '@/components/custom/form-actions';
 import { FormField } from '@/components/custom/form-field';
 import { ImageUploadField } from '@/components/custom/image-upload-field';
 import { Button } from '@/components/ui/button';
@@ -134,7 +135,7 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
     const hasResume = profile.resume_url !== null && !data.remove_resume;
 
     return (
-        <form onSubmit={submit} className="grid grid-cols-1 gap-6" noValidate>
+        <form onSubmit={submit} className="grid grid-cols-1 gap-6 pb-20 md:pb-0" noValidate>
             <Card>
                 <CardHeader>
                     <CardTitle>Identity</CardTitle>
@@ -327,12 +328,12 @@ export function ProfileForm({ profile, availabilityStatuses }: ProfileFormProps)
                 </CardContent>
             </Card>
 
-            <div>
-                <Button type="submit" disabled={form.processing}>
+            <FormActions>
+                <Button type="submit" disabled={form.processing} className="max-md:flex-1">
                     {form.processing && <Spinner />}
                     Save settings
                 </Button>
-            </div>
+            </FormActions>
         </form>
     );
 }

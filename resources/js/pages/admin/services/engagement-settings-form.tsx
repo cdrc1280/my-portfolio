@@ -1,5 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
+import { FormActions } from '@/components/custom/form-actions';
 import { FormField } from '@/components/custom/form-field';
 import { RepeatableRows } from '@/components/custom/repeatable-rows';
 import { Button } from '@/components/ui/button';
@@ -37,7 +38,7 @@ export function EngagementSettingsForm({ engagement }: { engagement: EngagementS
     };
 
     return (
-        <form onSubmit={submit} noValidate>
+        <form onSubmit={submit} className="pb-20 md:pb-0" noValidate>
             <Card>
                 <CardHeader>
                     <CardTitle>Engagement & process</CardTitle>
@@ -77,12 +78,12 @@ export function EngagementSettingsForm({ engagement }: { engagement: EngagementS
                         errorKey="process_steps"
                         addLabel="Add step"
                     />
-                    <div>
-                        <Button type="submit" disabled={form.processing}>
+                    <FormActions>
+                        <Button type="submit" disabled={form.processing} className="max-md:flex-1">
                             {form.processing && <Spinner />}
                             Save engagement settings
                         </Button>
-                    </div>
+                    </FormActions>
                 </CardContent>
             </Card>
         </form>

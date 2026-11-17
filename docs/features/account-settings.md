@@ -10,7 +10,7 @@ Login account management (separate from [Site settings](profile.md)).
 - Controllers: `app/Domains/Account/Controllers/Settings/ProfileController.php`, `app/Domains/Account/Controllers/Settings/SecurityController.php` · routes: `routes/account.php`
 - Domain: `app/Domains/Account`: `Data/{AccountProfile,PasswordUpdate,DeleteAccount}Data`, `Resources/UserResource` (shared as `auth.user`). Fortify's `TwoFactorAuthenticationRequest` stays: it manages two-factor state and validates nothing.
 - Pages: `resources/js/pages/settings/*`
-- Two-factor: `components/manage-two-factor.tsx`, `components/two-factor-setup-modal.tsx`
+- Two-factor: `components/manage-two-factor.tsx`, `components/two-factor-setup-modal.tsx`. The setup modal and the delete-account dialog (`components/delete-user.tsx`) use `ResponsiveDialog`, so they open as bottom drawers on phones
 
 ## Tests
 
