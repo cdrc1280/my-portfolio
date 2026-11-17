@@ -228,10 +228,6 @@ class PortfolioSeeder extends Seeder
                 - Storefront with catalog, cart, checkout (pickup or delivery, GCash), order tracking and customer accounts
                 - 383 automated tests; Pint, Larastan (level 7), ESLint, Prettier and TypeScript all pass with no baseline
                 MD,
-            'metrics' => [
-                ['label' => 'Back-office modules', 'value' => '31'],
-                ['label' => 'Automated tests', 'value' => '383'],
-            ],
             'cover' => '/images/projects/abcdips-desktop.jpg',
             'live_url' => 'https://abc-dips-and-treats.vercel.app',
             'repo_url' => 'https://github.com/cdrc1280/ABCDips-and-Treats',
