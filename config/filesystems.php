@@ -39,7 +39,8 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Private files are never handed out by URL, so the signed /storage/{path} routes stay off.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

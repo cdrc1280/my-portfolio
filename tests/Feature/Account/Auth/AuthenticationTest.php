@@ -75,3 +75,13 @@ test('users are rate limited', function () {
 
     $response->assertTooManyRequests();
 });
+
+test('one account is rate limited across ips', function () {
+    $user = User::factory()->create();
+
+    RateLimiter::increment(md5('login'.'login-email:'.$user->email), amount: 10);
+
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])
+        ->post(route('login.store'), ['email' => $user->email, 'password' => 'wrong-password'])
+        ->assertTooManyRequests();
+});

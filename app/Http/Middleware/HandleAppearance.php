@@ -16,7 +16,10 @@ class HandleAppearance
      */
     public function handle(Request $request, Closure $next): Response
     {
-        View::share('appearance', $request->cookie('appearance') ?? 'dark');
+        // The value reaches an inline script and the <html> class, so only known values pass.
+        $appearance = $request->cookie('appearance');
+
+        View::share('appearance', in_array($appearance, ['light', 'dark', 'system'], true) ? $appearance : 'dark');
 
         return $next($request);
     }

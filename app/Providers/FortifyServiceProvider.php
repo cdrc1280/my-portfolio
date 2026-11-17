@@ -76,9 +76,14 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            $email = Str::transliterate(Str::lower((string) $request->input(Fortify::username())));
 
-            return Limit::perMinute(5)->by($throttleKey);
+            // Per email and IP, plus a cap per email alone, so rotating IPs (or a spoofed forwarded IP
+            // behind a misconfigured proxy) can't keep guessing one account's password.
+            return [
+                Limit::perMinute(5)->by($email.'|'.$request->ip()),
+                Limit::perMinute(10)->by('login-email:'.$email),
+            ];
         });
 
     }
