@@ -122,6 +122,7 @@ class PortfolioSeeder extends Seeder
                 'tags' => ['Laravel', 'Filament', 'Vue.js', 'MySQL', 'Tailwind CSS'],
                 'featured' => true,
             ],
+            $this->abcDipsCaseStudy(),
             $this->portfolioCaseStudy(),
             [
                 'title' => 'CBTVETO Landing Site',
@@ -190,6 +191,53 @@ class PortfolioSeeder extends Seeder
                 $project->images()->create(['path' => $url, 'alt' => "{$data['title']} screenshot", 'position' => $index + 1]);
             }
         }
+    }
+
+    /**
+     * ABCDips & Treats. Every statement below can be checked in github.com/cdrc1280/ABCDips-and-Treats.
+     *
+     * @return array<string, mixed>
+     */
+    private function abcDipsCaseStudy(): array
+    {
+        return [
+            'title' => 'ABCDips & Treats',
+            'summary' => 'Online shop and back office for a Cavite bakery: ordering, checkout and delivery, plus POS, inventory, costing and payroll.',
+            'problem' => 'A home bakery needed one system to take orders online and to run the shop behind them: products and recipes, ingredient stock, production batches, in-store sales, staff and payroll.',
+            'role_details' => <<<'MD'
+                - Designed and built the whole application: data model, back office, storefront and deployment
+                - Rewrote the first version (Vue, Filament, Livewire) as one Inertia and React app, module by module
+                - Used Claude Code as an AI pair programmer, with every change going through the same lint, type and test checks
+                MD,
+            'architecture' => <<<'MD'
+                A **Laravel 13** back end organised by business domain: each module in `app/Domains` (Catalog, Sales, Inventory, Costing, Production, Point of Sale, Employee, Storefront…) owns its models, actions, data objects, queries and resources. Input is validated by spatie/laravel-data classes and output goes through resources, so controllers stay thin.
+
+                The front end is **React 19 with TypeScript** over **Inertia.js**, with two entry points: the back office and the customer storefront. Both share one cocoa, caramel and cream palette, in light and dark.
+
+                Data lives in **PostgreSQL 17** with UUIDv7 keys. Production runs on **Vercel** in Singapore next to a **Neon** Postgres database; local development runs in **Docker**.
+                MD,
+            'decisions' => <<<'MD'
+                **Prices are decided on the server only.** Cart totals, custom-cake prices and delivery quotes are computed by dedicated pricing classes, and client-sent totals are never trusted. Tests cover price tampering.
+
+                **Permissions per domain.** Each module declares its permissions as an enum; controllers check them per action, and the back-office sidebar is stored in the database and filtered by what the user may see.
+
+                **Write-only secrets.** Store settings are schema-driven, and secret values can be replaced but never read back from the admin.
+                MD,
+            'results' => <<<'MD'
+                - 31 back-office modules plus a dashboard, point of sale, AI advisor, activity log and purchase-order PDF import
+                - Storefront with catalog, cart, checkout (pickup or delivery, GCash), order tracking and customer accounts
+                - 383 automated tests; Pint, Larastan (level 7), ESLint, Prettier and TypeScript all pass with no baseline
+                MD,
+            'metrics' => [
+                ['label' => 'Back-office modules', 'value' => '31'],
+                ['label' => 'Automated tests', 'value' => '383'],
+            ],
+            'cover' => '/images/projects/abcdips-desktop.jpg',
+            'live_url' => 'https://abc-dips-and-treats.vercel.app',
+            'repo_url' => 'https://github.com/cdrc1280/ABCDips-and-Treats',
+            'tags' => ['Laravel', 'React', 'TypeScript', 'Inertia.js', 'Tailwind CSS', 'PostgreSQL', 'Docker', 'Claude Code'],
+            'featured' => true,
+        ];
     }
 
     /**
