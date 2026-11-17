@@ -91,6 +91,17 @@ export function initializeTheme(): void {
 
     // Set up system theme change listener
     mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+
+    // Admin and public site share one setting; a change in another tab applies here at once.
+    window.addEventListener('storage', (event) => {
+        if (event.key !== 'appearance') {
+            return;
+        }
+
+        currentAppearance = getStoredAppearance();
+        applyTheme(currentAppearance);
+        notify();
+    });
 }
 
 export function useAppearance(): UseAppearanceReturn {

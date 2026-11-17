@@ -1,6 +1,7 @@
 import { Breadcrumbs } from '@/components/custom/breadcrumbs';
 import { NavUser } from '@/components/custom/nav-user';
 import { NotificationBell } from '@/components/custom/notification-bell';
+import { ThemeToggle } from '@/components/custom/theme-toggle';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
@@ -14,6 +15,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-1">
                 <NotificationBell />
+                <ThemeToggle />
                 <NavUser />
             </div>
         </header>

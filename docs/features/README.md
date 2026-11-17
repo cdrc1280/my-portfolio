@@ -32,6 +32,7 @@ One file per CMS module or page. Each one says what the module is for, where it 
 
 - **Full-width layout.** Admin pages use the whole content area. List and settings pages use `AdminSplit` (`resources/js/components/custom/admin-split.tsx`): the main content on the left, and a sticky 20rem side rail on the right from `xl` up, with a summary, breakdowns and tips. Below `xl` the rail stacks underneath. Project and post forms have their own built-in side column.
 - **CRUD lists** use `SortableCrudList`: add/edit dialogs, delete with confirmation, and drag to reorder when a reorder URL is given.
-- **Sidebar:** the collapse toggle sits in the sidebar header, right of the name. When collapsed, the logo is hidden and the toggle stays at the top of the icon column. On mobile it moves to the top bar (`app-sidebar.tsx`, `app-sidebar-header.tsx`).
+- **Sidebar:** the collapse toggle sits in the sidebar header, right of the name. When collapsed, the logo is hidden and the toggle stays at the top of the icon column. On mobile it moves to the top bar (`app-sidebar.tsx`, `app-sidebar-header.tsx`). Links are grouped (`NavGroup`, rendered by `nav-main.tsx`): **Workspace** (Dashboard, Board, Inbox), **Portfolio** (Projects, Experience, Testimonials, Tags & skills), **Pages** (Services, How I work, Blog, Uses), **Site** (Settings).
+- **Top bar:** notification bell, theme toggle (`ThemeToggle`, the same one as the public header), account menu.
 - **Loading** uses `AdminPageSkeleton`, which picks the list/form/detail/dashboard shape from the URL.
 - **Authorization:** every admin route sits behind `auth` + `can:access-admin`, and each controller also authorizes through its domain policy (`AdminPolicy`).

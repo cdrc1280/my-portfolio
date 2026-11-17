@@ -40,21 +40,39 @@ import { index as tagsIndex } from '@/routes/admin/tags';
 import { index as testimonialsIndex } from '@/routes/admin/testimonials';
 import { index as usesIndex } from '@/routes/admin/uses';
 import { index as approachesIndex } from '@/routes/admin/work-approaches';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
-    { title: 'Board', href: boardIndex(), icon: SquareKanban },
-    { title: 'Projects', href: projectsIndex(), icon: FolderKanban, matchPrefix: true },
-    { title: 'Tags & skills', href: tagsIndex(), icon: Tags, matchPrefix: true },
-    { title: 'Experience', href: experienceIndex(), icon: BriefcaseBusiness, matchPrefix: true },
-    { title: 'Testimonials', href: testimonialsIndex(), icon: MessageSquareQuote, matchPrefix: true },
-    { title: 'Services', href: servicesIndex(), icon: Handshake, matchPrefix: true },
-    { title: 'How I work', href: approachesIndex(), icon: ListChecks, matchPrefix: true },
-    { title: 'Blog', href: postsIndex(), icon: Newspaper, matchPrefix: true },
-    { title: 'Uses', href: usesIndex(), icon: Wrench, matchPrefix: true },
-    { title: 'Inbox', href: messagesIndex(), icon: Inbox, matchPrefix: true },
-    { title: 'Settings', href: profileEdit(), icon: Settings2 },
+const navGroups: NavGroup[] = [
+    {
+        label: 'Workspace',
+        items: [
+            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+            { title: 'Board', href: boardIndex(), icon: SquareKanban },
+            { title: 'Inbox', href: messagesIndex(), icon: Inbox, matchPrefix: true },
+        ],
+    },
+    {
+        label: 'Portfolio',
+        items: [
+            { title: 'Projects', href: projectsIndex(), icon: FolderKanban, matchPrefix: true },
+            { title: 'Experience', href: experienceIndex(), icon: BriefcaseBusiness, matchPrefix: true },
+            { title: 'Testimonials', href: testimonialsIndex(), icon: MessageSquareQuote, matchPrefix: true },
+            { title: 'Tags & skills', href: tagsIndex(), icon: Tags, matchPrefix: true },
+        ],
+    },
+    {
+        label: 'Pages',
+        items: [
+            { title: 'Services', href: servicesIndex(), icon: Handshake, matchPrefix: true },
+            { title: 'How I work', href: approachesIndex(), icon: ListChecks, matchPrefix: true },
+            { title: 'Blog', href: postsIndex(), icon: Newspaper, matchPrefix: true },
+            { title: 'Uses', href: usesIndex(), icon: Wrench, matchPrefix: true },
+        ],
+    },
+    {
+        label: 'Site',
+        items: [{ title: 'Settings', href: profileEdit(), icon: Settings2 }],
+    },
 ];
 
 const footerNavItems: NavItem[] = [{ title: 'View site', href: home(), icon: ExternalLink }];
@@ -79,7 +97,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain groups={navGroups} />
             </SidebarContent>
 
             <SidebarFooter>

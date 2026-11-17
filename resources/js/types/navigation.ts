@@ -14,3 +14,9 @@ export type NavItem = {
     /** Also mark active on nested routes (e.g. /admin/projects/1/edit). */
     matchPrefix?: boolean;
 };
+
+/** A labelled section of the admin sidebar. */
+export type NavGroup = {
+    label: string;
+    items: NavItem[];
+};

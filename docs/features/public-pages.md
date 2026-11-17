@@ -36,7 +36,7 @@ All body content sits on panels so text never lies directly on the dot backgroun
 
 ## Theme
 
-Dark by default. Light mode uses a soft off-white page (`#f6f4f1`) with slightly lighter cards instead of pure white. Emerald text keeps ≥4.5:1 contrast on it (tokens in `resources/css/app.css`; `theme-color` in `app.blade.php` and `use-appearance.tsx`).
+Dark by default. Light mode uses a soft off-white page (`#f6f4f1`) with slightly lighter cards instead of pure white. Emerald text keeps ≥4.5:1 contrast on it (tokens in `resources/css/app.css`; `theme-color` in `app.blade.php` and `use-appearance.tsx`). The public header and the admin top bar share one setting (`appearance` in localStorage and a cookie), so switching either one switches both; other open tabs follow at once through the `storage` event.
 
 All public pages also show the ["Ask about me" assistant](assistant.md) button while it's enabled.
 

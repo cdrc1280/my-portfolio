@@ -15,7 +15,7 @@ Mirror the Tags module, in data-flow order:
 10. `resources/js/types/domains/<name>.ts` (mirroring the Resource in snake_case), the pages in
     `pages/admin/<things>/` (with their private form/dialog next to them) and any shared components in
     `components/custom/<name>/`
-11. Sidebar entry in `resources/js/components/app-sidebar.tsx`
+11. Sidebar entry in the right group of `navGroups` in `resources/js/components/custom/app-sidebar.tsx`
 12. Tests in `tests/Feature/<Name>/{Actions,Queries,Admin,Public}/`
 13. A feature doc in `docs/features/` (see CLAUDE.md)
 14. Seed data, only if it is real, in `database/seeders`

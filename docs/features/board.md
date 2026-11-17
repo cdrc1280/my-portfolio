@@ -2,7 +2,7 @@
 
 The admin's private kanban board for tasks, ideas and notes. Nothing on it is shown on the public site.
 
-- **Admin:** `/admin/board` (sidebar entry right under Dashboard)
+- **Admin:** `/admin/board` (sidebar: Workspace group, under Dashboard)
 - **Public:** none
 
 ## Fields

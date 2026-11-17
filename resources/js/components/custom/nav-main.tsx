@@ -7,16 +7,17 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import type { NavItem } from '@/types';
+import type { NavGroup } from '@/types';
 
-export function NavMain({ items }: { items: NavItem[] }) {
+/** The admin sidebar's labelled sections. */
+export function NavMain({ groups }: { groups: NavGroup[] }) {
     const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
 
-    return (
-        <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Content</SidebarGroupLabel>
+    return groups.map((group) => (
+        <SidebarGroup key={group.label} className="px-2 py-1">
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => (
+                {group.items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                             asChild
@@ -32,5 +33,5 @@ export function NavMain({ items }: { items: NavItem[] }) {
                 ))}
             </SidebarMenu>
         </SidebarGroup>
-    );
+    ));
 }
