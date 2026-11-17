@@ -7,6 +7,7 @@ One file per CMS module or page. Each one says what the module is for, where it 
 | Module | Admin | Public | Doc |
 | --- | --- | --- | --- |
 | Dashboard | `/admin` | — | [dashboard.md](dashboard.md) |
+| Board | `/admin/board` | — (private) | [board.md](board.md) |
 | Projects | `/admin/projects` | `/projects`, `/projects/{slug}`, home | [projects.md](projects.md) |
 | Blog | `/admin/posts` | `/blog`, `/blog/{slug}` | [blog.md](blog.md) |
 | Experience | `/admin/experience` | `/about`, home | [experience.md](experience.md) |

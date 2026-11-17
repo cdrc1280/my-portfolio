@@ -10,6 +10,7 @@ import {
     MessageSquareQuote,
     Newspaper,
     Settings2,
+    SquareKanban,
     Tags,
     Wrench,
 } from 'lucide-react';
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/sidebar';
 import { home } from '@/routes';
 import { dashboard } from '@/routes/admin';
+import { index as boardIndex } from '@/routes/admin/board';
 import { index as experienceIndex } from '@/routes/admin/experience';
 import { index as messagesIndex } from '@/routes/admin/messages';
 import { index as postsIndex } from '@/routes/admin/posts';
@@ -42,6 +44,7 @@ import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+    { title: 'Board', href: boardIndex(), icon: SquareKanban },
     { title: 'Projects', href: projectsIndex(), icon: FolderKanban, matchPrefix: true },
     { title: 'Tags & skills', href: tagsIndex(), icon: Tags, matchPrefix: true },
     { title: 'Experience', href: experienceIndex(), icon: BriefcaseBusiness, matchPrefix: true },

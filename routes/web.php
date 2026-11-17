@@ -20,6 +20,7 @@ require __DIR__.'/assistant.php';
 require __DIR__.'/seo.php';
 require __DIR__.'/dashboard.php';
 require __DIR__.'/tags.php';
+require __DIR__.'/board.php';
 require __DIR__.'/experience.php';
 require __DIR__.'/testimonials.php';
 require __DIR__.'/work-approach.php';
