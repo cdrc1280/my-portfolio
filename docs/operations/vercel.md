@@ -83,6 +83,13 @@ To actually send email (recommended), also add these. Gmail is free: Google Acco
 
 Without these, emails are only written to the logs, and the contact form still works.
 
+Optional integrations for the admin dashboard:
+
+| Name | Value |
+|---|---|
+| `CALENDLY_TOKEN` | Calendly personal access token (Calendly → Integrations → API & Webhooks). Shows upcoming calls. |
+| `GITHUB_TOKEN` | Optional GitHub token; only raises the API rate limit for the activity tile |
+
 Everything else (database, cache, sessions, uploads, logging) has defaults in `Dockerfile.vercel`.
 
 ## Step 5. Deploy
