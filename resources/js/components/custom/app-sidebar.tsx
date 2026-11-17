@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import {
     BriefcaseBusiness,
     ExternalLink,
@@ -14,6 +14,7 @@ import {
     Tags,
     Wrench,
 } from 'lucide-react';
+import { useEffect } from 'react';
 import AppLogo from '@/components/custom/app-logo';
 import { NavFooter } from '@/components/custom/nav-footer';
 import { NavMain } from '@/components/custom/nav-main';
@@ -26,6 +27,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarTrigger,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { home } from '@/routes';
 import { dashboard } from '@/routes/admin';
@@ -78,6 +80,11 @@ const navGroups: NavGroup[] = [
 const footerNavItems: NavItem[] = [{ title: 'View site', href: home(), icon: ExternalLink }];
 
 export function AppSidebar() {
+    const { setOpenMobile } = useSidebar();
+
+    // On phones the sidebar is an off-canvas sheet: close it as soon as a link starts a visit.
+    useEffect(() => router.on('start', () => setOpenMobile(false)), [setOpenMobile]);
+
     // The inset variant has no edge of its own, and in dark mode its background matches the page.
     return (
         <Sidebar collapsible="icon" variant="inset" className="border-r border-sidebar-border">
