@@ -4,7 +4,6 @@ import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
-import { bunny } from 'laravel-vite-plugin/fonts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
 
 export default defineConfig({
@@ -12,15 +11,6 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
-            fonts: [
-                bunny('Geist', {
-                    weights: [400, 500, 600],
-                }),
-                // Tags, section labels, dates, metadata, code and folder trees.
-                bunny('Geist Mono', {
-                    weights: [400, 500],
-                }),
-            ],
         }),
         inertia(),
         react(),
@@ -32,6 +22,21 @@ export default defineConfig({
             formVariants: true,
         }),
     ]),
+    // On Vercel each file request can start its own container, so a visit should need few files:
+    // npm packages in one chunk, shared app code in another. Pages keep their own chunks because
+    // app.blade.php loads the current page's chunk through the Vite manifest.
+    build: {
+        rolldownOptions: {
+            output: {
+                codeSplitting: {
+                    groups: [
+                        { name: 'vendor', test: /node_modules/, priority: 20 },
+                        { name: 'shared', test: /resources\/js\/(components|hooks|lib|layouts|routes|actions|wayfinder|types)\//, priority: 10 },
+                    ],
+                },
+            },
+        },
+    },
     // The SSR bundle includes its dependencies, so production only needs Node + bootstrap/ssr
     // (no node_modules in the Vercel image).
     ssr: {

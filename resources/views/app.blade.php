@@ -34,7 +34,9 @@
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-        @fonts
+        {{-- Fonts load from Bunny's CDN, not /build: on Vercel every file request can start its own container. --}}
+        <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+        <link rel="stylesheet" href="https://fonts.bunny.net/css?family=geist:400,500,600|geist-mono:400,500&display=swap">
 
         @include('partials.analytics')
 
